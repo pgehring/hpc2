@@ -62,7 +62,7 @@ int main(){
     printf("\nReference Result:\n");
     printVector(M, y_Ref);
 
-    // Compute using sky implementation
+    // Compute using jds implementation
     sky_spmv(T_SKY, x, y_Tst);    
     printf("\nTest Result:\n");
     printVector(M, y_Tst);
