@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+#$ -S /bin/bash
+
+export MYAPP=./test_openmpi
+export MYAPP_FLAGS=''
+
+#$ -N TEST_OPENMPI 
+#$ -pe openmpi 4
+
+. /etc/profile.d/modules.sh
+# Load one of these
+module add openmpi/gcc
+# module add openmpi/psc
+# module add openmpi/pgi
+# module add openmpi/intel 
+
+
+#$ -cwd
+# $ -v MPI_HOME
+
+CMD="$MPI_HOME/bin/mpirun -np $NSLOTS -machinefile $TMPDIR/machines $MYAPP $MYAPP_FLAGS" 
+
+echo $CMD
+
+$CMD

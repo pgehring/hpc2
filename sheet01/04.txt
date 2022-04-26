@@ -1,0 +1,16 @@
+b) What is a Beowulf Cluster?
+Pacioli ist ein Beowulf Cluster. ”Beowulf” ist nicht die Bezeichnung für eine bestimmte Software,
+sondern bezeichnet vielmehr den Aufbau des Clusters, der aus vernetzten, ladenüblichen Personal
+Computern oder auch aus spezialisierter Hardware besteht. Die einzelnen Rechner kommunizieren
+über IP. Dabei ermöglicht es Software, wie Message Passing Interface und PVM, Rechenoperationen
+aufzuteilen. Die Leistungsfähigkeit lässt sich bei großen Problemen durch das Hinzufügen weiterer
+Rechner im Allgemeinen steigern. Mit weiteren Rechnern steigt aber auch der Kommunkiatkonsauf-
+wand. Bei kleinen Problemen, kann es dadurch sogar länger dauern.
+
+c) What does a workload management system do?
+It manages workload, Kappa. Es nimmt Jobs an und verteilt sie auf Knoten.
+
+d)
+ii. Man braucht Jobskripte, um einen Job an das Batch-System zu senden.
+
+

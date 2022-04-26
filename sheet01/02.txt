@@ -1,0 +1,28 @@
+sky
++ direct solvers with no pivoting
++ if A is spd, skyline structure is preserverd in cholesky decomposition
+
+cds
++ for nonsymmetric diagonally structured matrices (z.b. mehrere diagonalen in der matrix)
+
+ellpack
++ good for efficient computation
+- explicit zeros
+- not efficient if rows have different # of zero elements
++ little zero padding if rows have the same # of zero elements
+
+jds
++ tailored for sparse matrix vector multiplications
++ suited for simd machines
+
+coo
++ only non-zero elements are stored
++ fast constructing of sparse matrices
+
+csr
++ only non-zero elements are stored
++ fast constructing of sparse matrices
++ conversion to and from coo is possible in linear time
+
+ccs
++ this is essentially the same as csr, just with flipped roles for rows/columns
