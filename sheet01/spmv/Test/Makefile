@@ -15,18 +15,22 @@ I = -I../Include
 LDLIBS += -lm
 CS = $(LDFLAGS) ../Lib/libhpc.a $(LDLIBS)
 
-all: test_cs_spmv test_jds_spmv test_sky_spmv
+all: test_cs_spmv test_jds_spmv test_jds_spmv_diag test_sky_spmv_diag
 	- ./test_cs_spmv
+	- ./test_jds_spmv
 	- ./test_jds_spmv_diag
 	- ./test_sky_spmv_diag
 
 test_cs_spmv: test_cs_spmv.c
 	$(CC) $(CF) $(I) -o $@ $@.c utils.c $(CS)
 
-test_jds_spmv: test_jds_spmv_diag.c
+test_jds_spmv: test_jds_spmv.c
 	$(CC) $(CF) $(I) -o $@ $@.c utils.c $(CS)
 
-test_sky_spmv: test_sky_spmv_diag.c
+test_jds_spmv_diag: test_jds_spmv_diag.c
+	$(CC) $(CF) $(I) -o $@ $@.c utils.c $(CS)
+
+test_sky_spmv_diag: test_sky_spmv_diag.c
 	$(CC) $(CF) $(I) -o $@ $@.c utils.c $(CS)
 
 clean:
@@ -36,4 +40,8 @@ purge: clean
 	- $(RM) -r ./test_cs_spmv \
     *.a *.dSYM *.obj *.dll
 	- $(RM) -r ./test_jds_spmv \
+    *.a *.dSYM *.obj *.dll
+	- $(RM) -r ./test_jds_spmv_diag \
+    *.a *.dSYM *.obj *.dll
+	- $(RM) -r ./test_sky_spmv_diag \
     *.a *.dSYM *.obj *.dll
