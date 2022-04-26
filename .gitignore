@@ -1,0 +1,9 @@
+# ignore desktop metadata
+.DS_Store
+
+# ignore object files
+*.o
+
+
+# ignore console and binary output
+*.out
