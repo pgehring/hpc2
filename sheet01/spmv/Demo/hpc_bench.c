@@ -108,23 +108,23 @@ int main ()
         // printf("Time spent for multiplication of SED matrix\n%f s\n", t3);
 
         /* benchmark sky */
-        // runs = 0;
-        // double t4 = 0;
-        // do {
-        //     T_SKY = sky_compress(T_COO);
+        runs = 0;
+        double t4 = 0;
+        do {
+            T_SKY = sky_compress(T_COO);
 
-        //     double t0 = wallTime();
-        //     sky_spmv(T_SKY, x, y);
-        //     t4 += wallTime() - t0;
-        //     ++runs;
-        // } while (t4 < MIN_T);
-        // t4 /= runs;
+            double t0 = wallTime();
+            sky_spmv(T_SKY, x, y);
+            t4 += wallTime() - t0;
+            ++runs;
+        } while (t4 < MIN_T*0.1);
+        t4 /= runs;
 
-        // sky_free(T_SKY);
+        sky_free(T_SKY);
         // printf("Time spent for multiplication of SKY matrix\n%f s\n", t4);
 
-        printf("%td\t%td\t%4.5f\t%4.5f\t%4.5f\n", M, N, t1, t2, t3);
-        // printf("%td\t%td\t%4.5f\t%4.5f\t%4.5f\t%4.5f\n", M, N, t1, t2, t3, t4);
+        // printf("%td\t%td\t%4.5f\t%4.5f\t%4.5f\n", M, N, t1, t2, t3);
+        printf("%td\t%td\t%4.5f\t%4.5f\t%4.5f\t%4.5f\n", M, N, t1, t2, t3, t4);
     }
     cs_free (T_COO);
 }
