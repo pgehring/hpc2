@@ -7,11 +7,6 @@ index jds_spmv (const jds *A, const double *x, double *y)
 	return 0;
     }
 
-    // zero initialize result vector
-    for (index i=0; i<A->m; ++i){
-	y[i] = 0;
-    }
-
     index colInd;
     index rowInd;
     index nColElem = 0;

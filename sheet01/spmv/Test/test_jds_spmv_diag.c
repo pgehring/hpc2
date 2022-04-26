@@ -44,10 +44,6 @@ int main(){
     printf("\nTest Matrix JDS-Format:\n");
     jds_print(T_JDS, 0);
 
-    // Create Matrix in SKY format
-    T_SKY = sky_compress(T_COO);
-    printf("\nTest Matrix SKY-Format:\n");
-    sky_print(T_SKY, 0);
 
     // allocate and random initialize Vector x
     x = malloc(N*sizeof(double));
