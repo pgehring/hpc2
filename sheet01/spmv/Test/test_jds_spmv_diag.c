@@ -25,7 +25,7 @@ int main(){
     double *y_Ref;
     double *y_Tst;
 
-    printf ("---------------------\nTest jds_spmv:\n") ; 
+    printf ("---------------------\nTest jds_spmv on diagonal matrices:\n") ; 
 
     // initialize random value engine
     srand(time(NULL));

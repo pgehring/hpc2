@@ -19,12 +19,10 @@ int main(){
     cs *T_COO;
     jds *T_JDS;
     gem *T_GEM;
-    sky *T_SKY;
 
     double *x;
     double *y_Ref;
     double *y_Tst;
-    double *y_Tst_sky;
 
     printf ("---------------------\nTest jds_spmv:\n") ; 
 
@@ -45,11 +43,6 @@ int main(){
     printf("\nTest Matrix JDS-Format:\n");
     jds_print(T_JDS, 0);
 
-    // Create Matrix in SKY format
-    T_SKY = sky_compress(T_COO);
-    printf("\nTest Matrix SKY-Format:\n");
-    sky_print(T_SKY, 0);
-
     // allocate and random initialize Vector x
     x = malloc(N*sizeof(double));
     initVector(N, x, true);
@@ -64,10 +57,6 @@ int main(){
     y_Tst = malloc(M*sizeof(double));
     initVector(M, y_Tst, false);
 
-    // allocate and zero initialize test result vector
-    y_Tst_sky = malloc(M*sizeof(double));
-    initVector(M, y_Tst_sky, false);
-
     // Copmute with using reference implementation
     gem_gaxpy(T_GEM, x, y_Ref);
     printf("\nReference Result:\n");
@@ -78,28 +67,17 @@ int main(){
     printf("\nTest Result:\n");
     printVector(M, y_Tst);
 
-    // Compute using sky implementation
-    sky_spmv(T_SKY, x, y_Tst_sky);    
-    printf("\nTest Result sky:\n");
-    printVector(M, y_Tst_sky);
-
     //Calculate RMS error
     double err = calcErrorNorm(M, y_Ref, y_Tst);
     printf("\nRMS Error: %lf\n", err);
 
-    //Calculate RMS error
-    double err_sky = calcErrorNorm(M, y_Ref, y_Tst_sky);
-    printf("\nRMS Error for sky: %lf\n", err_sky);
-
     // free memory
     free(y_Tst);
     free(y_Ref);
-    free(y_Tst_sky);
     free(x);
     cs_free(T_COO);
     gem_free(T_GEM);
     jds_free(T_JDS);
-    sky_free(T_SKY);
 
     printf("done.\n");
 }

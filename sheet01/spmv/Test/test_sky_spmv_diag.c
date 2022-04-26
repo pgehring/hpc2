@@ -24,7 +24,7 @@ int main(){
     double *y_Ref;
     double *y_Tst;
 
-    printf ("---------------------\nTest jds_spmv:\n") ; 
+    printf ("---------------------\nTest sky_spmv on diagonal matrices:\n") ; 
 
     // initialize random value engine
     srand(time(NULL));
@@ -61,6 +61,11 @@ int main(){
     gem_gaxpy(T_GEM, x, y_Ref);
     printf("\nReference Result:\n");
     printVector(M, y_Ref);
+
+    // Compute using jds implementation
+    sky_spmv(T_SKY, x, y_Tst);    
+    printf("\nTest Result:\n");
+    printVector(M, y_Tst);
 
     //Calculate RMS error
     double err = calcErrorNorm(M, y_Ref, y_Tst);
