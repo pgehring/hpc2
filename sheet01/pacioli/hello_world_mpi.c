@@ -24,25 +24,25 @@ int main(int argc, char *argv[])
 	specially... */
 	if(myid == 0)
 	{
-		printf(``%d: We have %d processors\n'', myid, numprocs);
+		printf("%d: We have %d processors\n", myid, numprocs);
 		for(i=1;i<numprocs;i++)
 		{
-			sprintf(buff, ``Hello %d! ``, i);
+			sprintf(buff, "Hello %d!", i);
 			MPI_Send(buff, BUFSIZE, MPI_CHAR, i, TAG, MPI_COMM_WORLD);
 		}
 		for(i=1;i<numprocs;i++)
 		{
 			MPI_Recv(buff, BUFSIZE, MPI_CHAR, i, TAG, MPI_COMM_WORLD, &stat);
-			printf(``%d: %s\n'', myid, buff);
+			printf("%d: %s\n", myid, buff);
 		}
 	}
 	else
 	{
 		/* receive from rank 0: */
 		MPI_Recv(buff, BUFSIZE, MPI_CHAR, 0, TAG, MPI_COMM_WORLD, &stat);
-		sprintf(idstr, ``Processor %d ``, myid);
+		sprintf(idstr, "Processor %d", myid);
 		strcat(buff, idstr);
-		strcat(buff, ``reporting for duty\n'');
+		strcat(buff, "reporting for duty\n");
 		/* send to rank 0: */
 		MPI_Send(buff, BUFSIZE, MPI_CHAR, 0, TAG, MPI_COMM_WORLD);
 	}
