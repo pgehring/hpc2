@@ -18,7 +18,7 @@ CS = $(LDFLAGS) ../Lib/libhpc.a $(LDLIBS)
 all: lib hpc_demo bench
 	- ./hpc_demo < ../Matrix/t1
 	- ./hpc_demo < ../Matrix/t2
-#	- ./hpc_bench
+	- ./hpc_bench
 
 lib:
 	( cd ../Lib ; $(MAKE) )
@@ -33,5 +33,5 @@ clean:
 	- $(RM) *.o
 
 purge: clean
-	- $(RM) -r hpc_demo \
+	- $(RM) -r hpc_demo hpc_bench \
     *.a *.dSYM *.obj *.dll
