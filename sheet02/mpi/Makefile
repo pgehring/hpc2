@@ -1,4 +1,4 @@
-all: test
+.PHONY: test
 
-test: .
+test: 
 	( cd test; $(MAKE) )

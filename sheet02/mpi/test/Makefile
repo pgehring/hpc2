@@ -1,8 +1,11 @@
 CXX := mpic++ -std=c++17
-FLAGS := -O3 -Wall -I ../source -xc++ -lstdc++ -shared-libgcc
+FLAGS := -O3 -Wall -I ../source
 
-all: test_mpi_mv_div_p
+.PHONY: test_mpi_mv_div_p
 
 test_mpi_mv_div_p: test_mpi_mv_div_p.cpp
-	- $(CXX) $(FLAGS) -o ../build/$@ $@.cpp
-	- mpirun -np 2 ../build/$@
+	$(foreach DIM, 10 100 1000, \
+		$(CXX) $(FLAGS) -DDIM_M=$(DIM) -DDIM_N=$(DIM) -o ../build/$@ $@.cpp \
+		&& mpirun -np 2 ../build/$@;)
+	
+

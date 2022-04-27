@@ -1,21 +1,75 @@
 #include <mpi.h>
 
-#include <init.hpp>
-#include <mpi_mv_div_p.hpp>
-#include <print.hpp>
+#include <cassert>
+#include <fmt/printf.hpp>
+#include <matvec/copy.hpp>
+#include <matvec/mv.hpp>
+#include <mpi/mv.hpp>
+#include <string>
+#include <tools/init.hpp>
+#include <tools/print.hpp>
+
+#ifndef DIM_M
+#define DIM_M 10
+#endif
+
+#ifndef DIM_N
+#define DIM_N 10
+#endif
 
 int main(int argc, char** argv) {
-	MPI_Init(&argc, &argv);
+    MPI_Init(&argc, &argv);
 
-	std::size_t m = 10;
-	std::size_t n = 10;
-	std::ptrdiff_t incRow = n;
-	double A[m * n];
-	double x[n];
-	double y[m];
+    int rank;
+    int nof_processes;
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &nof_processes);
 
-	lpc::incremental_init(m * n, A, 1);
-	lpc::mpi_mv_div_p(m, n, 1, A, incRow, x, 1, 1, y, 1);
+    std::size_t m = DIM_M;
+    std::size_t n = DIM_N;
+    std::ptrdiff_t incRow = n;
+    double* A = nullptr;
+    double x[n];
+    double y_ref[m], y_tst[m];
+    double ab[2];  // alpha and beta
 
-	MPI_Finalize();
+    if (rank == 0) {
+        A = new double[m * n];
+        lpc::tools::random_init(m * n, A, 1);
+        lpc::tools::random_init(n, x, 1);
+        lpc::tools::random_init(m, y_ref, 1);
+        lpc::matvec::copy(m, y_ref, 1, y_tst, 1);
+        lpc::tools::random_init(2, ab, 1);
+    }
+
+    lpc::mpi::mv_div_p(m, n, ab[0], A, incRow, x, 1, ab[1], y_tst, 1);
+
+    if (rank == 0) {
+        lpc::matvec::mv(m, n, ab[0], A, incRow, x, 1, ab[1], y_ref, 1);
+
+        std::string line(32, '-');
+        fmt::printf("%s\n", line);
+        fmt::printf("m=%zu, n=%zu, p=%zu\n", m, n, nof_processes);
+        fmt::printf("Testing equality of y_ref and y_tst...\n");
+
+        fmt::printf("(Showing <= 10 entries)\n");
+        fmt::printf("y_ref = ");
+        lpc::tools::print_vector(m <= 10 ? m : 10, y_ref, 1);
+        fmt::printf("y_tst = ");
+        lpc::tools::print_vector(m <= 10 ? m : 10, y_tst, 1);
+
+        fmt::printf("(No output = no error)\n");
+        for (std::size_t i = 0; i < m; i++) {
+            if (y_ref[i] != y_tst[i]) {
+                fmt::printf("y_ref[%zu] != y_tst[%zu]\n", i, i);
+            }
+        }
+
+        fmt::printf("Done.\n");
+        fmt::printf("%s\n", line);
+
+        delete[] A;
+    }
+
+    MPI_Finalize();
 }
