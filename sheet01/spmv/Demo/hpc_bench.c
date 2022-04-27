@@ -8,11 +8,11 @@
 #endif
 
 #ifndef MAX_DIM_M
-#define MAX_DIM_M   80
+#define MAX_DIM_M   800
 #endif
 
 #ifndef MAX_DIM_N
-#define MAX_DIM_N   80
+#define MAX_DIM_N   800
 #endif
 
 
@@ -58,7 +58,7 @@ int main ()
     printf("M\tN\tCOO\tJDS\tSED\tSKY\n");
     printf("===========================================\n");
     
-    for (index M=10, N=10; M<=MAX_DIM_M && N<=MAX_DIM_N; M+=10, N+=10){
+    for (index M=1000, N=1000; M<=MAX_DIM_M && N<=MAX_DIM_N; M+=10, N+=10){
         // printf("\nrunning benchmark for M=%td and N=%td..\n", M, N);
         /* benchmark cs */
         int runs = 0;
