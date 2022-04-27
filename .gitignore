@@ -1,9 +1,16 @@
 # ignore desktop metadata
 .DS_Store
 
-# ignore object files
-*.o
+# ignore build folder
+*/build
+*/Build
 
+# ignore object and library files
+*.o
+*.a
+
+# ignore vim swp files
+*.swp
 
 # ignore console and binary output
 *.out
