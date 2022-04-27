@@ -1,0 +1,3 @@
+1.
+Ich denke, dass es einen deutlichen Unterschied macht, ob man sich nur linear viele Elemente
+speichert, oder quadratisch viele Elemente.
