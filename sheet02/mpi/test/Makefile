@@ -1,9 +1,7 @@
 CXX := mpic++ -std=c++17
 FLAGS := -O3 -Wall -I ../source
 
-.PHONY: tests
-
-tests: test_mpi_mv_div_p test_mpi_mv
+test: test_mpi_mv_div_p test_mpi_mv
 
 test_mpi_mv_div_p: test_mpi_mv_div_p.cpp
 	$(foreach DIM, 10 100 1000, \
