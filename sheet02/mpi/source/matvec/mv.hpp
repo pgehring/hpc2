@@ -1,5 +1,5 @@
-#ifndef MV_HPP
-#define MV_HPP
+#ifndef LPC_MATVEC_MV_HPP
+#define LPC_MATVEC_MV_HPP
 
 #include <cstddef>
 

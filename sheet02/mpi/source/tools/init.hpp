@@ -1,5 +1,5 @@
-#ifndef INIT_HPP
-#define INIT_HPP
+#ifndef LPC_TOOLS_INIT_HPP
+#define LPC_TOOLS_INIT_HPP
 
 #include <cstddef>
 #include <random>

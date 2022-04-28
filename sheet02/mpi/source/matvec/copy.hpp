@@ -1,5 +1,5 @@
-#ifndef COPY_HPP
-#define COPY_HPP
+#ifndef LPC_MATVEC_COPY_HPP
+#define LPC_MATVEC_COPY_HPP
 
 #include <cstddef>
 

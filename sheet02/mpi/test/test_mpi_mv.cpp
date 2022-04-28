@@ -10,11 +10,11 @@
 #include <tools/print.hpp>
 
 #ifndef DIM_M
-#define DIM_M 10
+#define DIM_M 9
 #endif
 
 #ifndef DIM_N
-#define DIM_N 10
+#define DIM_N 9
 #endif
 
 int main(int argc, char** argv) {
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
         lpc::tools::random_init(2, ab, 1);
     }
 
-    lpc::mpi::mv_div_p(m, n, ab[0], A, incRow, x, 1, ab[1], y_tst, 1);
+    lpc::mpi::mv(m, n, ab[0], A, incRow, x, 1, ab[1], y_tst, 1);
 
     if (rank == 0) {
         lpc::matvec::mv(m, n, ab[0], A, incRow, x, 1, ab[1], y_ref, 1);

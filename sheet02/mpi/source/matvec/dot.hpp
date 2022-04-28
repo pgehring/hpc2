@@ -1,5 +1,5 @@
-#ifndef DOT_HPP
-#define DOT_HPP
+#ifndef LPC_MATVEC_DOT_HPP
+#define LPC_MATVEC_DOT_HPP
 
 #include <cstddef>
 #include <type_traits>

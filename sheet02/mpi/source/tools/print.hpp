@@ -1,5 +1,5 @@
-#ifndef PRINT_HPP
-#define PRINT_HPP
+#ifndef LPC_TOOLS_PRINT_HPP
+#define LPC_TOOLS_PRINT_HPP
 
 #include <cstddef>
 
