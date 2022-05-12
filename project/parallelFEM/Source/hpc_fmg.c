@@ -1,33 +1,39 @@
 #include "hpc.h"
 
 void hpc_fmg(sed **A, double *b, double *x, index nCycle, mesh **H,
-             index nLevel, index pre, index post, index gamma) {
+             index nLevel, index pre, index post, index gamma)
+{
     index j, k, nIter, *p;
     double *wx, *wb, *wr, **xx, **bb, **rr, tmp;
 
     if (!nLevel) /* If no hierachy -> solve exactly */
     {
-        wr = reinterpret_cast<double*>(malloc(A[0]->n * sizeof(double)));
-        for (k = 0; k < 5 * A[0]->n; k++) {
+        wr = (double *)malloc(A[0]->n * sizeof(double));
+        for (k = 0; k < 5 * A[0]->n; k++)
+        {
             sed_gs_constr(A[0], b, x, wr, H[0]->fixed, H[0]->nfixed, 1);
             sed_gs_constr(A[0], b, x, wr, H[0]->fixed, H[0]->nfixed, 0);
         }
         free(wr);
         nIter = 2 * k;
-    } else {
-        p = reinterpret_cast<index*>(malloc((nLevel + 2) * sizeof(index)));
+    }
+    else
+    {
+        p = (index *)malloc((nLevel + 2) * sizeof(index));
         p[0] = 0;
-        for (j = 0; j <= nLevel; j++) p[j + 1] = p[j] + A[j]->n;
+        for (j = 0; j <= nLevel; j++)
+            p[j + 1] = p[j] + A[j]->n;
 
-        wx = reinterpret_cast<double*>(calloc(p[nLevel], sizeof(double)));
-        wb = reinterpret_cast<double*>(malloc(p[nLevel] * sizeof(double)));
-        wr = reinterpret_cast<double*>(malloc(p[nLevel + 1] * sizeof(double)));
+        wx = (double *)calloc(p[nLevel], sizeof(double));
+        wb = (double *)malloc(p[nLevel] * sizeof(double));
+        wr = (double *)malloc(p[nLevel + 1] * sizeof(double));
 
-        xx = reinterpret_cast<double**>(malloc((nLevel + 1) * sizeof(double*)));
-        bb = reinterpret_cast<double**>(malloc((nLevel + 1) * sizeof(double*)));
-        rr = reinterpret_cast<double**>(malloc((nLevel + 1) * sizeof(double*)));
+        xx = (double **)malloc((nLevel + 1) * sizeof(double *));
+        bb = (double **)malloc((nLevel + 1) * sizeof(double *));
+        rr = (double **)malloc((nLevel + 1) * sizeof(double *));
 
-        for (j = 0; j < nLevel; j++) {
+        for (j = 0; j < nLevel; j++)
+        {
             xx[j] = wx + p[j];
             bb[j] = wb + p[j];
             rr[j] = wr + p[j];
@@ -38,13 +44,15 @@ void hpc_fmg(sed **A, double *b, double *x, index nCycle, mesh **H,
         free(p);
 
         /* restriction of rhs downwards */
-        for (k = nLevel; k > 0; k--) {
+        for (k = nLevel; k > 0; k--)
+        {
             hpc_rest(bb[k], H[k]->edge2no, H[k]->nedges, bb[k - 1],
                      H[k]->ncoord);
         }
 
         // "Solve on coarsest grid"
-        for (k = 0; k < 5 * A[0]->n; k++) {
+        for (k = 0; k < 5 * A[0]->n; k++)
+        {
             sed_gs_constr(A[0], bb[0], xx[0], rr[0], H[0]->fixed, H[0]->nfixed,
                           1);
             sed_gs_constr(A[0], bb[0], xx[0], rr[0], H[0]->fixed, H[0]->nfixed,
@@ -52,7 +60,8 @@ void hpc_fmg(sed **A, double *b, double *x, index nCycle, mesh **H,
         }
 
         /* iterate until convergence */
-        for (k = 0; k < nLevel; k++) {
+        for (k = 0; k < nLevel; k++)
+        {
             /* prolongation */
             hpc_prol_quad(xx[k], xx[k + 1], H[k]->elem, H[k]->ncoord,
                           H[k]->nelem, H[k]->nedges);

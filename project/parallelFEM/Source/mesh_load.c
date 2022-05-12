@@ -1,27 +1,33 @@
 #include "hpc.h"
 
 /* load a (index) matrix from a file */
-index *mesh_load_index(char *fname, index cols, index *rows) {
+index *mesh_load_index(char *fname, index cols, index *rows)
+{
     FILE *file;
     index cnt, j, a, *data;
 
     file = fopen(fname, "r");
-    if (file == NULL) return (NULL);
+    if (file == NULL)
+        return (NULL);
     cnt = 0;
-    while (fscanf(file, "%zu", &a) != EOF) cnt++;
+    while (fscanf(file, "%zu", &a) != EOF)
+        cnt++;
     rows[0] = cnt / cols;
-    if (cnt - rows[0] * cols) {
+    if (cnt - rows[0] * cols)
+    {
         fclose(file);
         printf("\nmesh_load_index() Error!!! cnt = %g, rows %g\n\n",
                (double)cnt, (double)rows[0]);
         return (NULL);
     }
 
-    data = reinterpret_cast<index*>(malloc(cnt * sizeof(index)));
-    if (!data) return (NULL);
+    data = (index *)malloc(cnt * sizeof(index));
+    if (!data)
+        return (NULL);
 
     fseek(file, 0L, SEEK_SET);
-    for (j = 0; j < cnt; j++) {
+    for (j = 0; j < cnt; j++)
+    {
         fscanf(file, "%zu", &(data[j]));
     }
     fclose(file);
@@ -29,29 +35,35 @@ index *mesh_load_index(char *fname, index cols, index *rows) {
 }
 
 /* load a (double) matrix from a file */
-double *mesh_load_double(char *fname, index cols, index *rows) {
+double *mesh_load_double(char *fname, index cols, index *rows)
+{
     FILE *file;
     index cnt, j;
     double a, *data;
 
     file = fopen(fname, "r");
-    if (file == NULL) return (NULL);
+    if (file == NULL)
+        return (NULL);
     cnt = 0;
-    while (fscanf(file, "%lg", &a) != EOF) cnt++;
+    while (fscanf(file, "%lg", &a) != EOF)
+        cnt++;
 
     rows[0] = cnt / cols;
-    if (cnt - rows[0] * cols) {
+    if (cnt - rows[0] * cols)
+    {
         fclose(file);
         printf("\nmesh_load_double() Error!!! cnt = %g, rows %g\n\n",
                (double)cnt, (double)rows[0]);
         return (NULL);
     }
 
-    data = reinterpret_cast<double*>(malloc(cnt * sizeof(double)));
-    if (!data) return (NULL);
+    data = (double *)malloc(cnt * sizeof(double));
+    if (!data)
+        return (NULL);
 
     fseek(file, 0L, SEEK_SET);
-    for (j = 0; j < cnt; j++) {
+    for (j = 0; j < cnt; j++)
+    {
         fscanf(file, "%lg", &(data[j]));
     }
     fclose(file);
@@ -59,7 +71,8 @@ double *mesh_load_double(char *fname, index cols, index *rows) {
 }
 
 /* load a triplet matrix from a file */
-mesh *mesh_load(char *fname) {
+mesh *mesh_load(char *fname)
+{
     FILE *file;
     char *tmp;
     index cnt, j, a, *data;
@@ -67,7 +80,8 @@ mesh *mesh_load(char *fname) {
     char buffer[512];
 
     M = mesh_alloc(0, 0, 0);
-    if (!M) return (NULL);
+    if (!M)
+        return (NULL);
     M->nedges = 0;
 
     sprintf(buffer, "%s.co", fname);

@@ -1,7 +1,8 @@
 #include "hpc.h"
 
 index hpc_mg(sed **A, double *b, double *x, double tol, index maxit, mesh **H,
-             index nLevel, index pre, index post, index gamma) {
+             index nLevel, index pre, index post, index gamma)
+{
     index j, k, nIter, *p;
     double *wx, *wb, *wr, **xx, **bb, **rr, tmp;
 
@@ -9,27 +10,32 @@ index hpc_mg(sed **A, double *b, double *x, double tol, index maxit, mesh **H,
     {
         //	  nIter = hpc_cg_constr(A[0], b, x, H[0]->fixed,
         //                          H[0]->nfixed, tol, maxit);
-        wr = reinterpret_cast<double*>(malloc(A[0]->n * sizeof(double)));
-        for (k = 0; k < 10; k++) {
+        wr = (double *)malloc(A[0]->n * sizeof(double));
+        for (k = 0; k < 10; k++)
+        {
             sed_gs_constr(A[0], b, x, wr, H[0]->fixed, H[0]->nfixed, 1);
             sed_gs_constr(A[0], b, x, wr, H[0]->fixed, H[0]->nfixed, 0);
         }
         free(wr);
         nIter = 2 * k;
-    } else {
-        p = reinterpret_cast<index*>(malloc((nLevel + 2) * sizeof(index)));
+    }
+    else
+    {
+        p = (index *)malloc((nLevel + 2) * sizeof(index));
         p[0] = 0;
-        for (j = 0; j <= nLevel; j++) p[j + 1] = p[j] + A[j]->n;
+        for (j = 0; j <= nLevel; j++)
+            p[j + 1] = p[j] + A[j]->n;
 
-        wx = reinterpret_cast<double*>(malloc(p[nLevel] * sizeof(double)));
-        wb = reinterpret_cast<double*>(malloc(p[nLevel] * sizeof(double)));
-        wr = reinterpret_cast<double*>(malloc(p[nLevel + 1] * sizeof(double)));
+        wx = (double *)malloc(p[nLevel] * sizeof(double));
+        wb = (double *)malloc(p[nLevel] * sizeof(double));
+        wr = (double *)malloc(p[nLevel + 1] * sizeof(double));
 
-        xx = reinterpret_cast<double**>(malloc((nLevel + 1) * sizeof(double *)));
-        bb = reinterpret_cast<double**>(malloc((nLevel + 1) * sizeof(double *)));
-        rr = reinterpret_cast<double**>(malloc((nLevel + 1) * sizeof(double *)));
+        xx = (double **)malloc((nLevel + 1) * sizeof(double *));
+        bb = (double **)malloc((nLevel + 1) * sizeof(double *));
+        rr = (double **)malloc((nLevel + 1) * sizeof(double *));
 
-        for (j = 0; j < nLevel; j++) {
+        for (j = 0; j < nLevel; j++)
+        {
             xx[j] = wx + p[j];
             bb[j] = wb + p[j];
             rr[j] = wr + p[j];
@@ -40,9 +46,11 @@ index hpc_mg(sed **A, double *b, double *x, double tol, index maxit, mesh **H,
         free(p);
 
         /* iterate until convergence */
-        for (j = 0; j <= maxit; j++) {
+        for (j = 0; j <= maxit; j++)
+        {
             /* Compute residual, r = b - A * x */
-            for (k = 0; k < A[nLevel]->n; k++) rr[nLevel][k] = 0.0;
+            for (k = 0; k < A[nLevel]->n; k++)
+                rr[nLevel][k] = 0.0;
             sed_gaxpy(A[nLevel], xx[nLevel], rr[nLevel]);
             for (k = 0; k < A[nLevel]->n; k++)
                 rr[nLevel][k] = bb[nLevel][k] - rr[nLevel][k];
@@ -54,7 +62,8 @@ index hpc_mg(sed **A, double *b, double *x, double tol, index maxit, mesh **H,
             for (k = 0; k < A[nLevel]->n; k++)
                 tmp += rr[nLevel][k] * rr[nLevel][k];
 
-            if (tmp <= tol * tol) {
+            if (tmp <= tol * tol)
+            {
                 free(wx);
                 free(wb);
                 free(wr);

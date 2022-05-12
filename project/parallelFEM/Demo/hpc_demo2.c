@@ -8,18 +8,23 @@ struct timeval tv[100];
 #define TIME_ELAPSED(j, k) \
     (1.E+6 * (tv[k].tv_sec - tv[j].tv_sec) + (tv[k].tv_usec - tv[j].tv_usec))
 
-double kappa(double x[2], index typ) { return (1.0); }
+double kappa(double x[2], index typ)
+{
+    return (1.0);
+}
 
 double F_vol(double x[2], index typ) { return (0.0); }
 
 double g_Neu(double x[2], index typ) { return (x[0] * x[1]); }
 
-double u_D(double x[2]) {
+double u_D(double x[2])
+{
     //  return ( 0.0 );
     return (x[0] * x[1]);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     index n, k, ncoord, nelem, nbdry, nfixed, nedges, total, *bdry,
         cnt = 0, N = 0, MAX_ITER = 100;
     char *Pdir = "../Problem/", fname[64];
@@ -29,19 +34,22 @@ int main(int argc, char **argv) {
 
     TIME_SAVE(0);
     printf("\n========================================\n");
-    if (argc < 2) {
+    if (argc < 2)
+    {
         printf("Problem not specified\n");
         return (1);
     }
     sprintf(fname, "%s%s", Pdir, argv[1]); /* get problem as parameter */
-    if (argc > 2) {                        /* get no. of refinements  */
-        if ((atoi(argv[2]) > 0) & (atoi(argv[2]) < 13)) N = atoi(argv[2]);
+    if (argc > 2)
+    { /* get no. of refinements  */
+        if ((atoi(argv[2]) > 0) & (atoi(argv[2]) < 13))
+            N = atoi(argv[2]);
     }
     printf("Load data form %s, no. refinements = %g\n", fname, (double)N);
 
     /* Allocate memory for hierachy */
-    H = reinterpret_cast<mesh**>(malloc((N + 1) * sizeof(mesh*)));
-    A = reinterpret_cast<sed**>(malloc((N + 1) * sizeof(sed*)));
+    H = (mesh **)malloc((N + 1) * sizeof(mesh *));
+    A = (sed **)malloc((N + 1) * sizeof(sed *));
 
     /* Load problem */
     H[0] = mesh_load(fname); /* load geometry */
@@ -53,15 +61,18 @@ int main(int argc, char **argv) {
 
     /* Build stiffness matrix, refine mesh and create hierachy  */
     k = 0;
-    while (1) {
+    while (1)
+    {
         TIME_SAVE(5 + 5 * k);
         A[k] = sed_nz_pattern(H[k]); /* get pattern of matrix */
-        if (!A[k]) return (1);
+        if (!A[k])
+            return (1);
         TIME_SAVE(6 + 5 * k);
         if (!sed_buildS(H[k], A[k]))
             return (1); /* assemble coefficient matrix */
         TIME_SAVE(7 + 5 * k);
-        if (k >= N) break;
+        if (k >= N)
+            break;
         H[k + 1] = mesh_refine(H[k]);
         TIME_SAVE(8 + 5 * k);
 
@@ -77,9 +88,9 @@ int main(int argc, char **argv) {
     printf("# refinements     =  %10g\n", (double)N);
 
     n = A[N]->n;
-    x = reinterpret_cast<double*>(calloc(n, sizeof(double))); /* get workspace for sol*/
-    w = reinterpret_cast<double*>(calloc(n, sizeof(double))); /* get temporary workspace */
-    b = reinterpret_cast<double*>(calloc(n, sizeof(double))); /* get workspace for rhs*/
+    x = (double *)calloc(n, sizeof(double)); /* get workspace for sol*/
+    w = (double *)calloc(n, sizeof(double)); /* get temporary workspace */
+    b = (double *)calloc(n, sizeof(double)); /* get workspace for rhs*/
     mesh_buildRhs(H[N], b, F_vol,
                   g_Neu); /* build rhs (volume and Neumann data */
     TIME_SAVE(2);
@@ -94,8 +105,10 @@ int main(int argc, char **argv) {
     nedges = H[N]->nedges;
     Coord = H[N]->coord;
 
-    for (k = 0; k < nbdry; k++) {
-        if (!bdry[4 * k + 3]) {
+    for (k = 0; k < nbdry; k++)
+    {
+        if (!bdry[4 * k + 3])
+        {
             x1[0] = Coord[2 * bdry[4 * k]];
             x1[1] = Coord[2 * bdry[4 * k] + 1];
             x2[0] = Coord[2 * bdry[4 * k + 1]];
@@ -114,7 +127,8 @@ int main(int argc, char **argv) {
 
     TIME_SAVE(4);
 
-    for (k = 0; k < HPC_MIN(10, A[N]->n); k++) {
+    for (k = 0; k < HPC_MIN(10, A[N]->n); k++)
+    {
         printf(" x[%g] = %g\n", (double)k, x[k]);
     }
 
@@ -127,12 +141,14 @@ int main(int argc, char **argv) {
     printf("========================================\n\n");
 
     k = 0;
-    while (1) {
+    while (1)
+    {
         printf("Pattern    = %9i ns\n",
                (int)TIME_ELAPSED(5 + 5 * k, 6 + 5 * k));
         printf("Build S    = %9i ns\n",
                (int)TIME_ELAPSED(6 + 5 * k, 7 + 5 * k));
-        if (k >= N) break;
+        if (k >= N)
+            break;
         printf("-------------------------------------\n");
         printf("Refine     = %9i ns\n",
                (int)TIME_ELAPSED(7 + 5 * k, 8 + 5 * k));
@@ -152,7 +168,8 @@ int main(int argc, char **argv) {
             (7 * nelem + 4 * nbdry + nedges * 2) * sizeof(index);
     printf("Total :       %12.6g MByte\n", (double)total / 1024. / 1024.);
 
-    for (k = 0; k <= N; k++) {
+    for (k = 0; k <= N; k++)
+    {
         mesh_free(H[k]);
         sed_free(A[k]);
     }
