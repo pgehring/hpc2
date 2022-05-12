@@ -14,7 +14,7 @@
 #       cd ../Demo ; make
 #
 
-CC = gcc
+CC = g++
 
 LIBRARY = libhpc
 

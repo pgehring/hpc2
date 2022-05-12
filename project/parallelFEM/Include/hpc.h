@@ -1,46 +1,45 @@
 #ifndef _HPC_H
 #define _HPC_H
+#include <errno.h>
 #include <limits.h>
 #include <math.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <errno.h>
 #include <string.h>
 
-#include <stdbool.h>
-
-#define index ptrdiff_t
+#define index std::ptrdiff_t
 
 /* --- primary HPC routines and data structures ------------------------- */
 
 typedef struct sed_sparse /* matrix in sparse matrix in compressed col. */
 {                         /* with extracted diagonal storage form      */
-  index nzmax;            /* maximum number of entries */
-  index n;                /* number of rows/columns          */
-  index *i;               /* col pointers and row indices    */
-  double *x;              /* numerical values, size i[n] */
+    index nzmax;          /* maximum number of entries */
+    index n;              /* number of rows/columns          */
+    index *i;             /* col pointers and row indices    */
+    double *x;            /* numerical values, size i[n] */
 } sed;
 
 typedef struct mesh_data /* mesh */
 {
-  index ncoord;   /* number of coordinates  */
-  index nelem;    /* number of elements   */
-  index nedges;   /* number of edges  */
-  index nbdry;    /* number of boundary elements  */
-  index nfixed;   /* number of fixed nodes ????    */
-  double *coord;  /* coordinates (x1,y1,x2,y2, ... ,x_ncoord,y_ncoord) */
-  index *elem;    /* elements ([e1,e2,e3,m1,m2,m3,t1], ... ) */
-  index *edge2no; /*  */
-  index *bdry;    /* bdry ([e1,e2,m1,t1], [e3,e4,m2,t2], ...) */
-  index *fixed;   /* bdry ([e1,e2,m1,t1], [e3,e4,m2,t2], ...) */
+    index ncoord;   /* number of coordinates  */
+    index nelem;    /* number of elements   */
+    index nedges;   /* number of edges  */
+    index nbdry;    /* number of boundary elements  */
+    index nfixed;   /* number of fixed nodes ???? aaah, ????, wer kennt's nicht, super docu */
+    double *coord;  /* coordinates (x1,y1,x2,y2, ... ,x_ncoord,y_ncoord) */
+    index *elem;    /* elements ([e1,e2,e3,m1,m2,m3,t1], ... ) */
+    index *edge2no; /* 404 docu not found */
+    index *bdry;    /* bdry ([e1,e2,m1,t1], [e3,e4,m2,t2], ...) */
+    index *fixed;   /* bdry ([e1,e2,m1,t1], [e3,e4,m2,t2], ...) */
 } mesh;
 
 /* utilities */
 void *hpc_realloc(void *p, index n, size_t size, index *ok);
 double hpc_cumsum(index *p, index *c, index n);
 
+/* sed functions */
 sed *sed_alloc(index n, index nzmax, index values);
 index sed_realloc(sed *A, index nzmax);
 sed *sed_free(sed *A);
@@ -52,6 +51,7 @@ index sed_dupl(sed *A);
 index sed_gs_constr(const sed *A, const double *b, double *x, double *w,
                     index *fixed, index nFixed, index forward);
 
+/* mesh functions */
 mesh *mesh_alloc(index ncoord, index nelem, index nbdry);
 mesh *mesh_free(mesh *M);
 mesh *mesh_load(char *fname);
