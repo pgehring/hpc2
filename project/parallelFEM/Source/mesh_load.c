@@ -82,7 +82,6 @@ mesh *mesh_load(char *fname) {
     M->bdry = mesh_load_index(buffer, 4, &(M->nbdry));
 
     if (!M->coord || !M->elem || !M->bdry) {
-        mesh_free(M);
         fprintf(stderr, "[E] Could not allocate mesh attributes\n");
         abort();
     }
