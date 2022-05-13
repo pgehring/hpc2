@@ -1,11 +1,13 @@
 #include "hpc.h"
 
 /* allocate mesh data structure */
-mesh *mesh_alloc(index ncoord, index nelem, index nbdry)
-{
+mesh *mesh_alloc(index ncoord, index nelem, index nbdry) {
     mesh *M = (mesh *)malloc(sizeof(mesh)); /* allocate the mesh struct */
-    if (!M)
-        return (NULL); /* out of memory */
+    if (!M) {
+        fprintf(stderr, "[E] Could not allocate mesh\n");
+        abort();
+    }
+
     M->ncoord = ncoord;
     M->nelem = nelem;
     M->nbdry = nbdry;
@@ -16,21 +18,22 @@ mesh *mesh_alloc(index ncoord, index nelem, index nbdry)
     M->bdry = (index *)malloc(nbdry * 4 * sizeof(index));
     M->edge2no = NULL;
     M->fixed = NULL;
-    return ((!M->coord || !M->elem || !M->bdry) ? mesh_free(M) : M);
+
+    if (!M->coord || !M->elem || !M->bdry) {
+        fprintf(stderr, "[E] Could not allocate mesh attributes\n");
+        abort();
+    }
+
+    return M;
 }
 
 /* free a mesh data structure */
-mesh *mesh_free(mesh *M)
-{
-    if (!M)
-        return (NULL); /* do nothing if M already NULL */
+void mesh_free(mesh *M) {
+    if (!M) return; /* do nothing if M already NULL */
     free(M->coord);
     free(M->elem);
     free(M->bdry);
-    if (M->edge2no)
-        free(M->edge2no);
-    if (M->fixed)
-        free(M->fixed);
+    free(M->edge2no);
+    free(M->fixed);
     free(M);
-    return (NULL); /* free the mesh struct and return NULL */
 }
