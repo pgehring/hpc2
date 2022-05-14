@@ -5,6 +5,7 @@
 C:
 	( cd Lib ; $(MAKE) )
 	( cd Demo ; $(MAKE) )
+	( cd Test ; $(MAKE) )
 
 all: C 
 

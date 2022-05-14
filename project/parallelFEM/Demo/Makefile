@@ -1,5 +1,5 @@
 
-CC = g++
+CC = gcc
 
 ifdef OPENMP
   CFLAGS += -fopenmp 

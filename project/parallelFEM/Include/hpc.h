@@ -1,5 +1,6 @@
 #ifndef _HPC_H
 #define _HPC_H
+
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
@@ -13,33 +14,39 @@
 
 /* --- primary HPC routines and data structures ------------------------- */
 
-typedef struct sed_sparse /* matrix in sparse matrix in compressed col. */
-{                         /* with extracted diagonal storage form      */
-    index nzmax;          /* maximum number of entries */
-    index n;              /* number of rows/columns          */
-    index *i;             /* col pointers and row indices    */
-    double *x;            /* numerical values, size i[n] */
+typedef struct sed_sparse { /* matrix in sparse matrix in compressed col. */
+                            /* with extracted diagonal storage form      */
+    index nzmax;            /* maximum number of entries */
+    index n;                /* number of rows/columns          */
+    index *i;               /* col pointers and row indices    */
+    double *x;              /* numerical values, size i[n] */
 } sed;
 
-typedef struct mesh_data /* mesh */
-{
-    index ncoord;   /* number of coordinates  */
-    index nelem;    /* number of elements   */
-    index nedges;   /* number of edges  */
-    index nbdry;    /* number of boundary elements  */
-    index nfixed;   /* number of fixed nodes ???? aaah, ????, wer kennt's nicht, super docu */
+typedef struct mesh_data { /* mesh */
+    index ncoord;          /* number of coordinates */
+    index nelem;           /* number of elements */
+    index nedges;          /* number of edges */
+    index nbdry;           /* number of boundary elements */
+    index nfixed;          /* number of fixed nodes */
     double *coord;  /* coordinates (x1,y1,x2,y2, ... ,x_ncoord,y_ncoord) */
     index *elem;    /* elements ([e1,e2,e3,m1,m2,m3,t1], ... ) */
-    index *edge2no; /* 404 docu not found */
+    index *edge2no; /* 404 */
     index *bdry;    /* bdry ([e1,e2,m1,t1], [e3,e4,m2,t2], ...) */
     index *fixed;   /* bdry ([e1,e2,m1,t1], [e3,e4,m2,t2], ...) */
 } mesh;
 
-/* utilities */
+typedef struct MeshMapping {
+    mesh *localMesh;
+    index *vertexL2G; /* local to global vertex mapping */
+    index *elemL2G;   /* local to global elem mapping */
+    index *bdryL2G;   /* local to global bdry mapping */
+} MeshMapping;
+
+// Utility functions
 void *hpc_realloc(void *p, index n, size_t size, index *ok);
 double hpc_cumsum(index *p, index *c, index n);
 
-/* sed functions */
+// SED functions
 sed *sed_alloc(index n, index nzmax, index values);
 index sed_realloc(sed *A, index nzmax);
 sed *sed_free(sed *A);
@@ -51,9 +58,9 @@ index sed_dupl(sed *A);
 index sed_gs_constr(const sed *A, const double *b, double *x, double *w,
                     index *fixed, index nFixed, index forward);
 
-/* mesh functions */
+// Mesh functions
 mesh *mesh_alloc(index ncoord, index nelem, index nbdry);
-mesh *mesh_free(mesh *M);
+void mesh_free(mesh *M);
 mesh *mesh_load(char *fname);
 index *mesh_getFixed(const index nCoord, const index *bdry, const index nBdry,
                      index *nFixed);
@@ -61,7 +68,18 @@ index mesh_print(const mesh *M, index brief);
 mesh *mesh_refine(mesh *In);
 index mesh_getEdge2no(const index nElem, const index *Elem, index *nEdges,
                       index **edge2no);
+MeshMapping ***mesh_split(mesh *, index[2]);
+MeshMapping *newMeshMapping(mesh *);
+void deleteMeshMapping(MeshMapping *);
+MeshMapping ***new2DMeshMapping(index, index);
+void delete2DMeshMapping(MeshMapping ***, index);
 
+// Slice functions
+index getSliceOffset(index, index, index);
+index getSliceSize(index, index, index);
+index getSliceIndex(index, index, index);
+
+// Misc
 void stima_laplace3(double p1[2], double p2[2], double p3[2], index typ,
                     double dx[6], double ax[9]);
 
@@ -90,4 +108,5 @@ double F_vol(double x[2], index typ);
 #define HPC_CSC(A) (A && (A->nz == -1))
 #define HPC_CSR(A) (A && (A->nz == -2))
 #define HPC_TRIPLET(A) (A && (A->nz >= 0))
+
 #endif

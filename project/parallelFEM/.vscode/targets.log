@@ -1,0 +1,1122 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+( cd Lib ; make )
+ 
+# GNU Make 4.2.1
+# Built for x86_64-pc-linux-gnu
+# Copyright (C) 1988-2016 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+
+# Make data base, printed on Sat May 14 10:02:06 2022
+
+# Variables
+
+# 'override' directive
+GNUMAKEFLAGS := 
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+ 
+# automatic
+?F = $(notdir $?)
+# environment
+DESKTOP_SESSION = ubuntu
+# default
+.SHELLFLAGS := -c
+# environment
+XDG_SESSION_CLASS = user
+# environment
+XDG_SESSION_TYPE = x11
+# environment
+VSCODE_LOG_NATIVE = false
+# makefile (from 'Makefile', line 19)
+LIBRARY = libhpc
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# environment
+IM_CONFIG_PHASE = 1
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+XAUTHORITY = /run/user/1000/gdm/Xauthority
+# environment
+GDMSESSION = ubuntu
+# environment
+XMODIFIERS = @im=ibus
+# makefile (from 'Makefile', line 31)
+I = -I../Include
+# makefile
+CURDIR := /home/moxx/Projects/hpc2/project/parallelFEM/Lib
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /usr/share/code/code
+# environment
+JOURNAL_STREAM = 8:45455
+# environment
+XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu:/etc/xdg
+# makefile (from 'Makefile', line 1)
+MAKEFILE_LIST :=  Makefile
+# automatic
+@F = $(notdir $@)
+# makefile (from 'Makefile', line 34)
+CP = cp -f
+# environment
+GIO_LAUNCHED_DESKTOP_FILE = /usr/share/applications/code.desktop
+# environment
+USERNAME = moxx
+# environment
+MAKELEVEL := 1
+# environment
+XDG_DATA_DIRS = /usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
+# environment
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+MANAGERPID = 1470
+# environment
+LESSOPEN = | /usr/bin/lesspipe %s
+# environment
+LC_NAME = de_DE.UTF-8
+# environment
+VSCODE_CWD = /home/moxx
+# default
+MAKE_HOST := x86_64-pc-linux-gnu
+# environment
+PATH = /usr/local/cuda-11.6/bin:/home/moxx/anaconda3/bin:/home/moxx/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+# makefile (from 'Makefile', line 30)
+CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -fPIC
+# environment
+GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
+# environment
+GJS_DEBUG_OUTPUT = stderr
+# environment
+SESSION_MANAGER = local/tars:@/tmp/.ICE-unix/1690,unix/tars:/tmp/.ICE-unix/1690
+# environment
+XDG_RUNTIME_DIR = /run/user/1000
+# environment
+CONDA_PREFIX = /home/moxx/anaconda3
+# environment
+XDG_MENU_PREFIX = gnome-
+# environment
+VSCODE_LOG_STACK = false
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+INVOCATION_ID = a8ef7314eb274658b8efe326de9d0659
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
+# environment
+LS_COLORS = 
+# environment
+XDG_SESSION_DESKTOP = ubuntu
+# environment
+SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
+# environment
+GIO_LAUNCHED_DESKTOP_FILE_PID = 4873
+# automatic
+%F = $(notdir $%)
+# environment
+DISPLAY = :1
+# environment
+CONDA_EXE = /home/moxx/anaconda3/bin/conda
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /home/moxx/Projects/hpc2/project/parallelFEM/Lib
+# default
+.LOADED := 
+# environment
+ 
+SSH_AGENT_PID = 1655
+# makefile (from 'Makefile', line 32)
+RANLIB = ranlib
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
+# environment
+GTK_MODULES = gail:atk-bridge
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /home/moxx
+# environment
+LD_LIBRARY_PATH = /usr/local/cuda-11.6/lib64
+# environment
+LESSCLOSE = /usr/bin/lesspipe %s %s
+# environment
+VSCODE_CODE_CACHE_PATH = /home/moxx/.config/Code/CachedData/da15b6fd3ef856477bf6f4fb29ba1b7af717770d
+# environment
+LOGNAME = moxx
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# environment
+CONDA_PROMPT_MODIFIER = (base) 
+# automatic
++F = $(notdir $+)
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# environment
+GNOME_DESKTOP_SESSION_ID = this-is-deprecated
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+LC_TIME = de_DE.UTF-8
+# environment
+CONDA_DEFAULT_ENV = base
+# default
+MAKE = $(MAKE_COMMAND)
+# environment
+QT_IM_MODULE = ibus
+# environment
+SHLVL = 0
+# makefile (from 'Makefile', line 17)
+CC = gcc
+# environment
+GNOME_SHELL_SESSION_MODE = ubuntu
+# environment
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-2de46e0c-e13e-462a-8b87-577e9a3d7f52.sock
+# default
+MAKE_VERSION := 4.2.1
+# environment
+USER = moxx
+# environment
+LC_MONETARY = de_DE.UTF-8
+# makefile
+.DEFAULT_GOAL := all
+# environment
+XDG_CURRENT_DESKTOP = Unity
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# environment
+LC_TELEPHONE = de_DE.UTF-8
+# environment
+CONDA_SHLVL = 1
+# default
+MAKE_COMMAND := make
+# environment
+OLDPWD = /home/moxx/Projects/hpc2/project/parallelFEM
+# default
+.VARIABLES := 
+# automatic
+ 
+*F = $(notdir $*)
+# environment
+VSCODE_IPC_HOOK = /run/user/1000/vscode-b416e907-1.67.1-main.sock
+# makefile
+MAKEFLAGS = pqrRw
+# environment
+MFLAGS = -pqrRw
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# environment
+GDK_BACKEND = x11
+# environment
+LC_PAPER = de_DE.UTF-8
+# makefile (from 'Makefile', line 40)
+HPC = sed_buildS.o sed_dupl.o sed_gaxpy.o sed_print.o sed_gs_constr.o sed_util.o hpc_cumsum.o hpc_malloc.o hpc_fmg.o hpc_mg.o hpc_mg_cycle.o mesh_buildRhs.o mesh_load.o hpc_prol.o hpc_prol_quad.o mesh_getEdge2no.o hpc_rest.o mesh_print.o mesh_refine.o mesh_getFixed.o mesh_util.o mesh_split.o slices.o
+# environment
+QT_ACCESSIBILITY = 1
+# makefile (from 'Makefile', line 36)
+AR_TARGET = $(LIBRARY).a
+# default
+MAKEFILES := 
+# environment
+LC_NUMERIC = de_DE.UTF-8
+# automatic
+<F = $(notdir $<)
+# environment
+LC_MEASUREMENT = de_DE.UTF-8
+# environment
+LC_ALL = C
+# environment
+CONDA_PYTHON_EXE = /home/moxx/anaconda3/bin/python
+# environment
+GJS_DEBUG_TOPICS = JS ERROR;JS LOG
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# environment
+_CE_M = 
+# environment
+CHROME_DESKTOP = code-url-handler.desktop
+# environment
+WINDOWPATH = 2
+# default
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# environment
+LC_IDENTIFICATION = de_DE.UTF-8
+# default
+.RECIPEPREFIX := 
+# environment
+LC_ADDRESS = de_DE.UTF-8
+# makefile (from 'Makefile', line 33)
+ARCHIVE = $(AR) $(ARFLAGS)
+# environment
+LANG = C
+# environment
+VSCODE_PID = 4873
+# environment
+ 
+_CE_CONDA = 
+# variable set hash-table stats:
+# Load=124/1024=12%, Rehash=0, Collisions=23/170=14%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# ../Include (device 2049, inode 9052793): No files, no impossibilities so far.
+# . (device 2049, inode 9052795): 28 files, no impossibilities.
+# ../Source (device 2049, inode 9052826): 33 files, no impossibilities so far.
+
+# 61 files, no impossibilities in 3 directories.
+
+# Implicit Rules
+
+%.o: ../Source/%.c ../Include/hpc.h
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# 1 implicit rules, 0 (0.0%) terminal.
+
+# Files
+
+# Not a target:
+../Source/mesh_buildRhs.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 15:53:12.822943539
+#  File has been updated.
+#  Successfully updated.
+
+sed_dupl.o: ../Source/sed_dupl.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'sed_dupl'
+#  Last modified 2022-05-13 23:52:55.835878527
+ 
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Include/hpc.h:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-13 23:52:52.659847881
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+../Source/hpc_fmg.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 15:53:12.822943539
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+../Source/sed_util.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 15:52:33.650967934
+#  File has been updated.
+#  Successfully updated.
+
+libhpc.a: sed_buildS.o sed_dupl.o sed_gaxpy.o sed_print.o sed_gs_constr.o sed_util.o hpc_cumsum.o hpc_malloc.o hpc_fmg.o hpc_mg.o hpc_mg_cycle.o mesh_buildRhs.o mesh_load.o hpc_prol.o hpc_prol_quad.o mesh_getEdge2no.o hpc_rest.o mesh_print.o mesh_refine.o mesh_getFixed.o mesh_util.o mesh_split.o slices.o
+#  Implicit rule search has not been done.
+#  Last modified 2022-05-14 00:31:48.656932823
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/9=0%
+#  recipe to execute (from 'Makefile', line 74):
+	$(ARCHIVE)  $@ $^
+ 
+	- $(RANLIB) $@
+
+hpc_prol_quad.o: ../Source/hpc_prol_quad.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'hpc_prol_quad'
+#  Last modified 2022-05-13 23:52:56.163881689
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+sed_util.o: ../Source/sed_util.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'sed_util'
+#  Last modified 2022-05-13 23:52:55.931879453
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Source/hpc_mg.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 15:53:12.822943539
+#  File has been updated.
+#  Successfully updated.
+
+all: install
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/9=0%
+
+hpc_malloc.o: ../Source/hpc_malloc.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'hpc_malloc'
+#  Last modified 2022-05-13 23:52:55.979879917
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Source/mesh_getEdge2no.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 14:56:57.902461563
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+../Source/mesh_split.c:
+#  Implicit rule search has been done.
+ 
+#  Last modified 2022-05-14 00:49:10.783992653
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+../Source/mesh_getFixed.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 14:56:57.334462119
+#  File has been updated.
+#  Successfully updated.
+
+hpc_mg_cycle.o: ../Source/hpc_mg_cycle.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'hpc_mg_cycle'
+#  Last modified 2022-05-13 23:52:56.059880687
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-13 20:50:04.359121531
+#  File has been updated.
+#  Successfully updated.
+
+mesh_print.o: ../Source/mesh_print.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'mesh_print'
+#  Last modified 2022-05-13 23:52:56.235882381
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Source/hpc_mg_cycle.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 15:53:12.822943539
+#  File has been updated.
+#  Successfully updated.
+
+ 
+# Not a target:
+../Source/mesh_refine.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-13 20:15:45.771494873
+#  File has been updated.
+#  Successfully updated.
+
+hpc_cumsum.o: ../Source/hpc_cumsum.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'hpc_cumsum'
+#  Last modified 2022-05-13 23:52:55.955879686
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+mesh_buildRhs.o: ../Source/mesh_buildRhs.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'mesh_buildRhs'
+#  Last modified 2022-05-13 23:52:56.087880955
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Source/mesh_load.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-13 18:50:01.773484772
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+../Source/hpc_prol_quad.c:
+#  Implicit rule search has been done.
+ 
+#  Last modified 2022-05-12 09:02:43.543985634
+#  File has been updated.
+#  Successfully updated.
+
+static: libhpc.a
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+../Source/mesh_util.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-13 23:53:09.316007783
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+../Source/sed_print.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 15:52:33.650967934
+#  File has been updated.
+#  Successfully updated.
+
+purge: clean
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 84):
+	- $(RM) *.a *.obj *.dll *.dylib *.so *.so.*
+
+sed_print.o: ../Source/sed_print.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'sed_print'
+#  Last modified 2022-05-13 23:52:55.88387899
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Source/hpc_malloc.c:
+#  Implicit rule search has been done.
+ 
+#  Last modified 2022-05-12 09:02:43.543985634
+#  File has been updated.
+#  Successfully updated.
+
+mesh_getEdge2no.o: ../Source/mesh_getEdge2no.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'mesh_getEdge2no'
+#  Last modified 2022-05-13 23:52:56.183881881
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+mesh_split.o: ../Source/mesh_split.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'mesh_split'
+#  Last modified 2022-05-14 00:31:48.652932818
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := mesh_split.o
+# automatic
+# % := 
+# automatic
+# * := mesh_split
+# automatic
+# + := ../Source/mesh_split.c ../Include/hpc.h ../Include/hpc.h Makefile
+# automatic
+# | := 
+# automatic
+# < := ../Source/mesh_split.c
+# automatic
+# ^ := ../Source/mesh_split.c ../Include/hpc.h Makefile
+# automatic
+# ? := ../Source/mesh_split.c
+# variable set hash-table stats:
+# Load=8/32=25%, Rehash=0, Collisions=1/18=6%
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+mesh_getFixed.o: ../Source/mesh_getFixed.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'mesh_getFixed'
+#  Last modified 2022-05-13 23:52:56.287882883
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+slices.o: ../Include/hpc.h Makefile
+#  Implicit rule search has not been done.
+ 
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+hpc_rest.o: ../Source/hpc_rest.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'hpc_rest'
+#  Last modified 2022-05-13 23:52:56.207882114
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+hpc_prol.o: ../Source/hpc_prol.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'hpc_prol'
+#  Last modified 2022-05-13 23:52:56.135881418
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+hpc_fmg.o: ../Source/hpc_fmg.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'hpc_fmg'
+#  Last modified 2022-05-13 23:52:56.003880149
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Source/sed_buildS.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 15:53:12.822943539
+#  File has been updated.
+#  Successfully updated.
+
+clean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 81):
+	- $(RM) *.o
+
+sed_buildS.o: ../Source/sed_buildS.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'sed_buildS'
+#  Last modified 2022-05-13 23:52:55.811878296
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+hpc_mg.o: ../Source/hpc_mg.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'hpc_mg'
+#  Last modified 2022-05-13 23:52:56.031880416
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Source/sed_gaxpy.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 15:52:33.650967934
+#  File has been updated.
+#  Successfully updated.
+
+ 
+sed_gaxpy.o: ../Source/sed_gaxpy.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'sed_gaxpy'
+#  Last modified 2022-05-13 23:52:55.859878759
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+mesh_refine.o: ../Source/mesh_refine.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'mesh_refine'
+#  Last modified 2022-05-13 23:52:56.263882652
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Source/hpc_cumsum.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 09:02:43.543985634
+#  File has been updated.
+#  Successfully updated.
+
+mesh_load.o: ../Source/mesh_load.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'mesh_load'
+#  Last modified 2022-05-13 23:52:56.111881187
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Source/sed_gs_constr.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 15:52:33.650967934
+#  File has been updated.
+#  Successfully updated.
+
+sed_gs_constr.o: ../Source/sed_gs_constr.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'sed_gs_constr'
+#  Last modified 2022-05-13 23:52:55.907879222
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+mesh_util.o: ../Source/mesh_util.c ../Include/hpc.h ../Include/hpc.h Makefile
+#  Implicit rule search has been done.
+#  Implicit/static pattern stem: 'mesh_util'
+#  Last modified 2022-05-13 23:53:11.10402483
+#  File has been updated.
+#  Successfully updated.
+#  recipe to execute (from 'Makefile', line 69):
+	$(CC) $(CF) $(I) -c $<
+
+# Not a target:
+../Source/mesh_print.c:
+#  Implicit rule search has been done.
+ 
+#  Last modified 2022-05-13 19:33:39.275794077
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+../Source/hpc_rest.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 09:02:43.543985634
+#  File has been updated.
+#  Successfully updated.
+
+install: libhpc.a
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/9=0%
+
+# Not a target:
+../Source/hpc_prol.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 09:02:43.543985634
+#  File has been updated.
+#  Successfully updated.
+
+# Not a target:
+../Source/sed_dupl.c:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-12 15:52:33.650967934
+#  File has been updated.
+#  Successfully updated.
+
+# files hash-table stats:
+# Load=55/1024=5%, Rehash=0, Collisions=8/185=4%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 117 / storage = 1614 B / avg = 13 B
+# current buf: size = 8162 B / used = 1614 B / count = 117 / avg = 13 B
+
+# strcache performance: lookups = 270 / hit rate = 56%
+# hash-table stats:
+# Load=117/8192=1%, Rehash=0, Collisions=3/270=1%
+# Finished Make data base on Sat May 14 10:02:06 2022
+
+ 
+# GNU Make 4.2.1
+# Built for x86_64-pc-linux-gnu
+# Copyright (C) 1988-2016 Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+ 
+
+# Make data base, printed on Sat May 14 10:02:06 2022
+
+# Variables
+
+# 'override' directive
+GNUMAKEFLAGS := 
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# environment
+DESKTOP_SESSION = ubuntu
+# default
+.SHELLFLAGS := -c
+# environment
+XDG_SESSION_CLASS = user
+# environment
+XDG_SESSION_TYPE = x11
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# environment
+IM_CONFIG_PHASE = 1
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+XAUTHORITY = /run/user/1000/gdm/Xauthority
+# environment
+GDMSESSION = ubuntu
+# environment
+XMODIFIERS = @im=ibus
+# makefile
+CURDIR := /home/moxx/Projects/hpc2/project/parallelFEM
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-us","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /usr/share/code/code
+# environment
+JOURNAL_STREAM = 8:45455
+# environment
+XDG_CONFIG_DIRS = /etc/xdg/xdg-ubuntu:/etc/xdg
+# makefile (from 'Makefile', line 1)
+ 
+MAKEFILE_LIST :=  Makefile
+# automatic
+@F = $(notdir $@)
+# environment
+GIO_LAUNCHED_DESKTOP_FILE = /usr/share/applications/code.desktop
+# environment
+USERNAME = moxx
+# environment
+MAKELEVEL := 0
+# environment
+XDG_DATA_DIRS = /usr/share/ubuntu:/usr/local/share/:/usr/share/:/var/lib/snapd/desktop
+# environment
+DBUS_SESSION_BUS_ADDRESS = unix:path=/run/user/1000/bus
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+MANAGERPID = 1470
+# environment
+LESSOPEN = | /usr/bin/lesspipe %s
+# environment
+LC_NAME = de_DE.UTF-8
+# environment
+VSCODE_CWD = /home/moxx
+# default
+MAKE_HOST := x86_64-pc-linux-gnu
+# environment
+PATH = /usr/local/cuda-11.6/bin:/home/moxx/anaconda3/bin:/home/moxx/anaconda3/condabin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+# environment
+GPG_AGENT_INFO = /run/user/1000/gnupg/S.gpg-agent:0:1
+# environment
+GJS_DEBUG_OUTPUT = stderr
+# environment
+SESSION_MANAGER = local/tars:@/tmp/.ICE-unix/1690,unix/tars:/tmp/.ICE-unix/1690
+# environment
+XDG_RUNTIME_DIR = /run/user/1000
+# environment
+CONDA_PREFIX = /home/moxx/anaconda3
+# environment
+XDG_MENU_PREFIX = gnome-
+# environment
+VSCODE_LOG_STACK = false
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# environment
+INVOCATION_ID = a8ef7314eb274658b8efe326de9d0659
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell archives jobserver output-sync check-symlink load
+# environment
+LS_COLORS = 
+# environment
+XDG_SESSION_DESKTOP = ubuntu
+ 
+# environment
+SSH_AUTH_SOCK = /run/user/1000/keyring/ssh
+# environment
+GIO_LAUNCHED_DESKTOP_FILE_PID = 4873
+# automatic
+%F = $(notdir $%)
+# environment
+DISPLAY = :1
+# environment
+CONDA_EXE = /home/moxx/anaconda3/bin/conda
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+PWD = /home/moxx/Projects/hpc2/project/parallelFEM
+# default
+.LOADED := 
+# environment
+SSH_AGENT_PID = 1655
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = ubuntu:GNOME
+# environment
+GTK_MODULES = gail:atk-bridge
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /home/moxx
+# environment
+LD_LIBRARY_PATH = /usr/local/cuda-11.6/lib64
+# environment
+LESSCLOSE = /usr/bin/lesspipe %s %s
+# environment
+VSCODE_CODE_CACHE_PATH = /home/moxx/.config/Code/CachedData/da15b6fd3ef856477bf6f4fb29ba1b7af717770d
+# environment
+LOGNAME = moxx
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# environment
+CONDA_PROMPT_MODIFIER = (base) 
+# automatic
++F = $(notdir $+)
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# environment
+GNOME_DESKTOP_SESSION_ID = this-is-deprecated
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+LC_TIME = de_DE.UTF-8
+# environment
+CONDA_DEFAULT_ENV = base
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+ 
+MAKECMDGOALS := all
+# environment
+QT_IM_MODULE = ibus
+# environment
+SHLVL = 0
+# environment
+GNOME_SHELL_SESSION_MODE = ubuntu
+# environment
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-2de46e0c-e13e-462a-8b87-577e9a3d7f52.sock
+# default
+MAKE_VERSION := 4.2.1
+# environment
+USER = moxx
+# environment
+LC_MONETARY = de_DE.UTF-8
+# makefile
+.DEFAULT_GOAL := C
+# environment
+XDG_CURRENT_DESKTOP = Unity
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# environment
+LC_TELEPHONE = de_DE.UTF-8
+# environment
+CONDA_SHLVL = 1
+# default
+MAKE_COMMAND := make
+# default
+.VARIABLES := 
+# automatic
+*F = $(notdir $*)
+# environment
+VSCODE_IPC_HOOK = /run/user/1000/vscode-b416e907-1.67.1-main.sock
+# makefile
+MAKEFLAGS = pqrR
+# environment
+MFLAGS = -pqrR
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# environment
+GDK_BACKEND = x11
+# environment
+LC_PAPER = de_DE.UTF-8
+# environment
+QT_ACCESSIBILITY = 1
+# default
+ 
+MAKEFILES := 
+# environment
+LC_NUMERIC = de_DE.UTF-8
+# automatic
+<F = $(notdir $<)
+# environment
+LC_MEASUREMENT = de_DE.UTF-8
+# environment
+LC_ALL = C
+# environment
+CONDA_PYTHON_EXE = /home/moxx/anaconda3/bin/python
+# environment
+GJS_DEBUG_TOPICS = JS ERROR;JS LOG
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# environment
+_CE_M = 
+# environment
+CHROME_DESKTOP = code-url-handler.desktop
+# environment
+WINDOWPATH = 2
+# default
+.INCLUDE_DIRS = /usr/include /usr/local/include /usr/include
+# environment
+LC_IDENTIFICATION = de_DE.UTF-8
+# default
+.RECIPEPREFIX := 
+# environment
+LC_ADDRESS = de_DE.UTF-8
+# environment
+LANG = C
+# environment
+VSCODE_PID = 4873
+# environment
+_CE_CONDA = 
+# variable set hash-table stats:
+ 
+# Load=115/1024=11%, Rehash=0, Collisions=19/149=13%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 2049, inode 9052788): 10 files, no impossibilities.
+
+# 10 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+C:
+#  Implicit rule search has not been done.
+#  Implicit/static pattern stem: ''
+#  Modification time never checked.
+#  File has been updated.
+#  Needs to be updated (-q is set).
+# automatic
+# @ := C
+# automatic
+# % := 
+# automatic
+# * := 
+# automatic
+# + := 
+# automatic
+# | := 
+# automatic
+# < := 
+# automatic
+# ^ := 
+# automatic
+# ? := 
+# variable set hash-table stats:
+ 
+# Load=8/32=25%, Rehash=0, Collisions=4/17=24%
+#  recipe to execute (from 'Makefile', line 6):
+	( cd Lib ; $(MAKE) )
+	( cd Demo ; $(MAKE) )
+	( cd Test ; $(MAKE) )
+
+all: C
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/9=0%
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  Last modified 2022-05-13 19:56:00.869822985
+#  File has been updated.
+#  Successfully updated.
+
+library:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 13):
+	( cd Lib ; $(MAKE) )
+
+purge:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+ 
+#  recipe to execute (from 'Makefile', line 20):
+	( cd Lib ; $(MAKE) purge )
+	( cd Demo ; $(MAKE) purge )
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+clean:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+#  recipe to execute (from 'Makefile', line 16):
+	( cd Lib ; $(MAKE) clean )
+	( cd Demo ; $(MAKE) clean )
+
+# files hash-table stats:
+# Load=8/1024=1%, Rehash=0, Collisions=0/22=0%
+# VPATH Search Paths
+
+# No 'vpath' search paths.
+
+# No general ('VPATH' variable) search path.
+
+# strcache buffers: 1 (0) / strings = 19 / storage = 136 B / avg = 7 B
+# current buf: size = 8162 B / used = 136 B / count = 19 / avg = 7 B
+
+# strcache performance: lookups = 31 / hit rate = 38%
+# hash-table stats:
+# Load=19/8192=0%, Rehash=0, Collisions=1/31=3%
+# Finished Make data base on Sat May 14 10:02:06 2022
+
+ 

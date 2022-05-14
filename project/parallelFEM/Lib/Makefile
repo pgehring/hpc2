@@ -14,7 +14,7 @@
 #       cd ../Demo ; make
 #
 
-CC = g++
+CC = gcc
 
 LIBRARY = libhpc
 
@@ -58,7 +58,9 @@ HPC = \
  mesh_print.o  \
  mesh_refine.o  \
  mesh_getFixed.o  \
- mesh_util.o  
+ mesh_util.o \
+ mesh_split.o \
+ slices.o
 
 
 $(HPC): ../Include/hpc.h Makefile
