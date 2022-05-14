@@ -12,6 +12,9 @@ all: C
 library:
 	( cd Lib ; $(MAKE) )
 
+test:
+	( cd Test ; $(MAKE) )
+
 clean:
 	( cd Lib ; $(MAKE) clean )
 	( cd Demo ; $(MAKE) clean )
