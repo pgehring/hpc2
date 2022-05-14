@@ -14,3 +14,5 @@
 
 # ignore console and binary output
 *.out
+
+*/*.vscode/*
