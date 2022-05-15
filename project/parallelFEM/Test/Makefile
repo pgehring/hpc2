@@ -2,12 +2,12 @@
 CC = gcc
 
 ifdef OPENMP
-  CFLAGS += -fopenmp 
-  LDFLAGS += -fopenmp
+  CFLAGS += -g -fopenmp 
+  LDFLAGS += -g -fopenmp
 endif
 
 ifdef OPT
-  CFLAGS += -O3 -funroll-loops -DNDEBUG # -Wpedantic
+  CFLAGS += -g -O3 -funroll-loops -DNDEBUG # -Wpedantic
 endif
 
 CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3
