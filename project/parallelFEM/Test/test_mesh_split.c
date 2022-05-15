@@ -5,8 +5,17 @@
 #define GRID_M 2
 #define GRID_N 2
 
+/**
+  + @brief compute the number of nodes for each local mesh and write it o array
+  * 
+  * @param buffer Array 
+  * @param globalMesh global Mesh
+  * @param gridDimX x dimension of MPI Grid
+  * @param gridDimY y dimension of MPI Grid
+*/
 void getTargetNodeCounts(index *buffer,mesh *globalMesh, 
 			      index gridDimX,index gridDimY){
+    // Compute the number of nodes for all local meshes
     for (index i=0; i<gridDimY; ++i){
 
 	for (index j=0; j<gridDimX; ++j){
@@ -18,6 +27,15 @@ void getTargetNodeCounts(index *buffer,mesh *globalMesh,
     }
 }
 
+
+/**
+  * @brief Collect the numer of nodes of all local meshes and write the values to 
+  *	   annray
+  * @param buffer array
+  * @param mapping mesh mapping
+  * @param gridDimX x dimension of MPI grid
+  * @param gridDimY y dimension of MPI grid
+*/
 void collectLocalNodeCounts(index *buffer, MeshMapping ***mapping,
 			    index gridDimX,index gridDimY){
     for (int i=0; i<gridDimY; ++i){
@@ -27,9 +45,18 @@ void collectLocalNodeCounts(index *buffer, MeshMapping ***mapping,
     }
 }
 
+/**
+  * @brief Compute the expected number of boundary elements for all lcoal meshes
+  *	   and write the values to array
+  * @param buffer array
+  * @param mesh global Mesh
+  * @param gridDimX x dimension of MPI grid
+  * @param gridDimY y dimension of MPI grid
+*/
 void getTargetBndryCounts(index *buffer, mesh *mesh, index gridDimX, index gridDimY){
     index nEdgesX, nEdgesY; 
 
+    // First, compute expected number of edges for each local mesh
     for (index i=0; i<gridDimY; ++i){
 	nEdgesY = getSliceSize((index)sqrt((double)mesh->ncoord - 1),
 			       gridDimY, i);
@@ -37,7 +64,10 @@ void getTargetBndryCounts(index *buffer, mesh *mesh, index gridDimX, index gridD
 	for (index j=0; j<gridDimX; ++j){
 	    nEdgesX = getSliceSize((index)sqrt((double)mesh->ncoord - 1),
 				    gridDimX, j);
-
+	    
+	    /** determin expected number of boundary elements in dependence of the
+		indices of the current local mesh.
+	     */
 	    buffer[i*gridDimX+j] = 0;
 
 	    if (i==0 || i==gridDimY-1){
@@ -51,6 +81,14 @@ void getTargetBndryCounts(index *buffer, mesh *mesh, index gridDimX, index gridD
     }
 }
 
+/**
+  * @brief collect the number of boundary elements of all local meshes according
+	   according to the mapping and write the values to an array
+  * @param buffer array
+  * @param mapping mesh mapping
+  * @param gridDimX x dimension of MPI grid
+  * @param gridDimY y dimension of MPI grid
+*/
 void collectLocalBndryCounts(index *buffer, MeshMapping ***mapping,
 			     index gridDimX, index gridDimY){
      for (int i=0; i<gridDimY; ++i){
@@ -61,24 +99,36 @@ void collectLocalBndryCounts(index *buffer, MeshMapping ***mapping,
 }
 
 
+/**
+  * @brief perform initial refinement of the mesh to make the split possible
+	   (mesh dimensions must be greater than grid dimension)
+  * @param globalMesh unrefined mesh
+  * @param gridDims array of dimensions of MPI grid
+*/
 mesh *initRefinement(mesh *globalMesh, index *gridDims){
+    /** define initial refinement, such that the dimensions of the mesh are
+	greater than the grid dimensions */
     index n = HPC_MAX(gridDims[0],gridDims[1]);
     mesh *mesh_current;
     mesh *mesh_previous;
 
+    // first refinement to initialize variable mesh_current
     mesh_current = mesh_refine(globalMesh);
     mesh_getEdge2no(mesh_current->nelem, mesh_current->elem, &mesh_current->nedges,
 		    &mesh_current->edge2no);
     mesh_current->fixed = mesh_getFixed(mesh_current->ncoord, mesh_current->bdry,
 					mesh_current->nbdry, &mesh_current->nfixed);
 
+    // Further refinements are performed iteratively
     for (int i=1; i<n; ++i){
 	mesh_previous = mesh_current;
+	// Overwrite mesh_current
 	mesh_current = mesh_refine(mesh_current);
 	mesh_getEdge2no(mesh_current->nelem, mesh_current->elem, &mesh_current->nedges,
 		        &mesh_current->edge2no);
 	mesh_current->fixed = mesh_getFixed(mesh_current->ncoord, mesh_current->bdry,
 					    mesh_current->nbdry, &mesh_current->nfixed);
+	// free the memory space of the previous mesh
 	mesh_free(mesh_previous);
     }
 
@@ -86,7 +136,15 @@ mesh *initRefinement(mesh *globalMesh, index *gridDims){
 }
 
 
-
+/**
+  * @brief Test the partitioning of the mesh, cmoputed using the function
+	   mesh_split() in terms of the numer of nodes and boundary elements of
+	   each local mesh
+  * @param globalMesh gloabl mesh
+  * @param gridDims araay of dimensions of the MPI grid
+  * @param numRefines number of grid refinements for wich the function shall be
+	    tested
+*/
 void testNodePartitioning(mesh *globalMesh, index *gridDims, int numRefines){
     mesh *mesh_current;
     mesh *mesh_previous;
