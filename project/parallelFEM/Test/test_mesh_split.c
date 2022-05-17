@@ -2,8 +2,68 @@
 
 #include "hpc.h"
 
+#ifndef GRID_M
 #define GRID_M 2
+#endif
+#ifndef GRID_N
 #define GRID_N 2
+#endif
+#ifndef N_TESTRUNS_MAPPING
+#define N_TESTRUNS_MAPPING 10
+#endif
+
+
+/**
+  * @brief Test the mapping of vertices from locat meshes to the global mesh, by
+  	   randomly picking local coordinates, determining the global index of
+	   the vertex using the mapping and comparing the global with the local 
+	   coordinates
+  * @param globalMesh the global mesh
+  * @param mapping Mapping object for the global mesh
+  * @param procIndX x-index of the to be tested process in the MPI grid
+  * @param procInd> y-index of the to be tested process in the MPI grid
+  * @param rep number repetitions to be performed
+  */
+bool testVertexMapping(mesh *globalMesh, MeshMapping ***mapping, index procIndX,
+		       index procIndY, int rep){
+    bool testRes;
+    index nLocalVert = mapping[procIndX][procIndY]->localMesh->ncoord;
+    
+    index randVal;
+    double localCoords[2];
+    double globalCoords[2];
+    index mapIndGlbl;
+    
+    // perform specified number of repetitions
+    for (int i=0; i<rep; ++i){
+	// randomly select an index of a local vertex
+	randVal = rand()%nLocalVert;
+	// Get coords of randomly selected local vertex
+	localCoords[0] = mapping[procIndX][procIndY]->localMesh->coord[randVal*2];
+	localCoords[1] = mapping[procIndX][procIndY]->localMesh->coord[randVal*2+1];
+	// Get global index through mapping
+	mapIndGlbl = mapping[procIndX][procIndY]->vertexL2G[randVal];
+	// Get global coordinates
+	globalCoords[0] = globalMesh->coord[mapIndGlbl*2];
+	globalCoords[1] = globalMesh->coord[mapIndGlbl*2+1];
+
+	// determine test result
+	testRes = (localCoords[0] == globalCoords[0] && localCoords[1] == globalCoords[1])?
+		   1:0;
+
+	printf("(%td,%td)|%-7td|(%1.3lf,%1.3lf)|(%1.3lf,%1.3lf)|%-4s\n", procIndX,
+		procIndY, mapIndGlbl, localCoords[0], localCoords[1], globalCoords[0],
+		globalCoords[1],(testRes)?"true":"false");
+
+	if (!testRes){
+	    break;
+	}
+    }
+
+    return testRes;
+}
+
+
 
 /**
  * @brief compute the number of nodes for each local mesh
@@ -140,6 +200,39 @@ mesh *initRefinement(mesh *globalMesh, index gridDims[2]) {
     return mesh_current;
 }
 
+
+
+/**
+  * @brief Test for the mapping of vertices, elements and boundaries from the
+	   local meshes to the global one. Tests are performed for the local
+	   mesh of each process in the MPI grid
+  * @param globalMesh the global unrefined mesh
+  * @param gridDims dimensions of the MPI grid
+*/
+bool testMapping(mesh *globalMesh, index *gridDims){
+    bool testResult = 0;
+    
+    // initial refinement of the mesh to make the split possible
+    mesh *mesh_refined = initRefinement(globalMesh, gridDims);
+    // spliet the mesh and thus create a mapping
+    MeshMapping ***testMapping = mesh_split(mesh_refined,gridDims);
+    
+    printf("\n--- Test 2.1 Mapping of vertices ---\n"); 
+    printf("%-5s|%-7s|%-13s|%-13s|%-4s\n", "proc", "map ind", "expect","actual","pass");
+    printf("----------------------------------------------\n");
+    // Test the mapping of the local mesh of each process in the MPI grid
+    for (int i=0;i<gridDims[0]; ++i){
+	for (int j=0; j<gridDims[1]; ++j){
+	    testResult = testVertexMapping(mesh_refined, testMapping, i, j, N_TESTRUNS_MAPPING);
+	    printf("----------------------------------------------\n");
+	}
+    }
+
+    return testResult;
+}
+
+
+
 /**
   * @brief Test the partitioning of the mesh, cmoputed using the function
            mesh_split() in terms of the numer of nodes and boundary elements of
@@ -149,7 +242,9 @@ mesh *initRefinement(mesh *globalMesh, index gridDims[2]) {
   * @param numRefines number of grid refinements for wich the function shall be
             tested
 */
-void testNodePartitioning(mesh *globalMesh, index *gridDims, int numRefines) {
+bool testNodePartitioning(mesh *globalMesh, index *gridDims, int numRefines) {	
+    bool testResult = 1;
+    
     mesh *mesh_current;
     mesh *mesh_previous;
 
@@ -169,8 +264,9 @@ void testNodePartitioning(mesh *globalMesh, index *gridDims, int numRefines) {
     index tstBndryCounts[gridDims[0] * gridDims[1]];
     MeshMapping ***testMapping;
 
+    bool resultCurrent = 1;
     for (index i = initialRefines; i < numRefines; ++i) {
-        // create mapping
+	// create mapping
         testMapping = mesh_split(mesh_current, gridDims);
 
         // Get raference node counts and node counts of local meshes
@@ -187,17 +283,25 @@ void testNodePartitioning(mesh *globalMesh, index *gridDims, int numRefines) {
 
         // Compare and print result
         index refCount, tstCount, refBndryCnts, tstBndryCnts;
-        for (index k = 0; k < gridDims[1]; ++k) {
+        
+	for (index k = 0; k < gridDims[1]; ++k) {
             for (index l = 0; l < gridDims[0]; ++l) {
                 refCount = refNodeCounts[k * gridDims[0] + l];
                 tstCount = testNodeCounts[k * gridDims[0] + l];
                 refBndryCnts = refBndryCounts[k * gridDims[0] + l];
                 tstBndryCnts = tstBndryCounts[k * gridDims[0] + l];
-                printf("%-4td|(%td,%td)|%-14td|%-14td|%-8td|%-8td|%-5s\n", i, k,
+               
+		resultCurrent = (refCount == tstCount &&
+				refBndryCnts == tstBndryCnts)?1:0;		
+
+		printf("%-4td|(%td,%td)|%-14td|%-14td|%-8td|%-8td|%-5s\n", i, k,
                        l, refCount, tstCount, refBndryCnts, tstBndryCnts,
-                       (refCount == tstCount && refBndryCnts == tstBndryCnts)
-                           ? "true"
-                           : "false");
+		       resultCurrent? "true":"FALSE");
+		
+		// Set test Result to false if current test did not pass
+		if (resultCurrent == 0){
+		    testResult = 0;
+		}
             }
         }
         printf(
@@ -221,24 +325,40 @@ void testNodePartitioning(mesh *globalMesh, index *gridDims, int numRefines) {
 
     // free final mesh
     mesh_free(mesh_current);
+
+    return testResult;
 }
 
 int main() {
-    setbuf(stdout, NULL);  // Disable stdout buffering
+    srand(time(NULL));
+
+    // Init global result vector to be negative 
+    bool resultTotal = 1;
+    bool resultCurrent;
+
     printf("\n=== Start test_mesh_split ===\n");
 
     char fname[32] = "../Problem/problem1";
     mesh *m1 = mesh_load(fname);
+    
     mesh_getEdge2no(m1->nelem, m1->elem, &m1->nedges, &m1->edge2no);
     m1->fixed = mesh_getFixed(m1->ncoord, m1->bdry, m1->nbdry, &m1->nfixed);
-
+  
     printf("\n--- Test 1: Partitioning of Nodes ---\n");
-    index dims[2] = {2, 4};
+    index dims[2] = {GRID_N,GRID_M};
 
-    testNodePartitioning(m1, dims, 8);
+    resultCurrent = testNodePartitioning(m1, dims, 8);
 
-    printf("Okay\n");
+    // rewrite total test result only if the test didn't already fail 
+    if (resultTotal) resultTotal = resultCurrent;
+
+    printf("\n--- Test 2: Mapping ---\n");
+    resultCurrent = testMapping(m1, dims);
+
+    if (resultTotal) resultTotal = resultCurrent; 
+
+    printf("\n--- Total Result: %-4s---\n",resultCurrent?"PASS":"FAIL");
+
     printf("=== End test_mesh_split ===\n");
-
     mesh_free(m1);
 }
