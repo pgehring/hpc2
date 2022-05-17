@@ -27,7 +27,13 @@ ifdef OPT
   CFLAGS += -g -O3 -funroll-loops -DNDEBUG -Wpedantic  # -mfpmath=sse #-march=native #
 endif
 
-CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -fPIC
+ifdef DEBUG
+DEBUG = -D_DEBUG
+else
+DEBUG =
+endif
+
+CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) $(DEBUG) -fPIC
 I = -I../Include
 RANLIB = ranlib
 ARCHIVE = $(AR) $(ARFLAGS)

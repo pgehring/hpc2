@@ -312,25 +312,52 @@ MeshMapping ***mesh_split(mesh *globalMesh, index gridDims[2]) {
 
     // Assign boundary edges to local meshes
     memset(indices, 0, gridDimX * gridDimY * sizeof(index));
+    for (index i = 0; i < gridDimX; i++)
+        for (index j = 0; j < gridDimY; j++)
+            DEBUG_PRINT("mapping[%zd][%zd]->localMesh->nbdry=%zd\n", i, j,
+                        mapping[i][j]->localMesh->nbdry);
+
     for (index i = 0; i < gnbdry; i++) {
         index k1 =
             getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimX, i, 0, 0);
         index l1 =
-            getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimX, i, 0, 1);
+            getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimY, i, 0, 1);
         index k2 =
             getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimX, i, 1, 0);
         index l2 =
-            getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimX, i, 1, 1);
+            getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimY, i, 1, 1);
+        DEBUG_PRINT("%3zd | (%zd,%zd)-(%zd,%zd) | ", i, k1, l1, k2, l2);
+        DEBUG_PRINT("(%5.3lf,%5.3lf)-(%5.3lf,%5.3lf) | ",
+                    getCoord(globalMesh, globalMesh->bdry[4 * i], 0),
+                    getCoord(globalMesh, globalMesh->bdry[4 * i], 1),
+                    getCoord(globalMesh, globalMesh->bdry[4 * i + 1], 0),
+                    getCoord(globalMesh, globalMesh->bdry[4 * i + 1], 1));
+
         index k = HPC_MIN(k1, k2);
         index l = HPC_MIN(l1, l2);
 
-        if (k < gridDimX && l < gridDimY) {
+        /**
+         *      north
+         *      ^__
+         *      |  |
+         * west |__| > east
+         *      south
+         */
+        if (k < gridDimX && l < gridDimY) {  // west or south
+            DEBUG_PRINT("%3s | indices[%zd][%zd]=%2zd | nbdry=%zd\n", "w/s", k,
+                        l, indices[k][l], mapping[k][l]->localMesh->nbdry);
             insertBdry(globalMesh, i,  //
                        mapping[k][l], indices[k][l]++);
-        } else if (k < gridDimX) {
+        } else if (l == gridDimY) {  // north
+            DEBUG_PRINT("%3s | indices[%zd][%zd]=%2zd | nbdry=%zd\n", "n", k,
+                        l - 1, indices[k][l - 1],
+                        mapping[k][l - 1]->localMesh->nbdry);
             insertBdry(globalMesh, i,  //
                        mapping[k][l - 1], indices[k][l - 1]++);
-        } else if (l < gridDimY) {
+        } else if (k == gridDimX) {  // east
+            DEBUG_PRINT("%3s | indices[%zd][%zd]=%2zd | nbdry=%zd\n", "e",
+                        k - 1, l, indices[k - 1][l],
+                        mapping[k - 1][l]->localMesh->nbdry);
             insertBdry(globalMesh, i,  //
                        mapping[k - 1][l], indices[k - 1][l]++);
         } else {
@@ -343,13 +370,14 @@ MeshMapping ***mesh_split(mesh *globalMesh, index gridDims[2]) {
     for (index k = 0; k < gridDimX; k++) {
         for (index l = 0; l < gridDimY; l++) {
             if (indices[k][l] != mapping[k][l]->localMesh->nbdry) {
-                printf("indices[%zd][%zd]=%zd, ", k, l, indices[k][l]);
-                printf("mapping[%zd][%zd]->localMesh->nbdry=%zd\n", k, l,
-                       mapping[k][l]->localMesh->nbdry);
+                DEBUG_PRINT("indices[%zd][%zd]=%zd, ", k, l, indices[k][l]);
+                DEBUG_PRINT("mapping[%zd][%zd]->localMesh->nbdry=%zd\n", k, l,
+                            mapping[k][l]->localMesh->nbdry);
             }
             assert(indices[k][l] == mapping[k][l]->localMesh->nbdry);
         }
     }
+    DEBUG_PRINT("%s\n", "Passt");
 
     return mapping;
 }

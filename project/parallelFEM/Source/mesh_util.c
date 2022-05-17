@@ -97,14 +97,18 @@ MeshMapping ***new2DMeshMapping(index gridDimX, index gridDimY) {
     MeshMapping ***mapping =
         (MeshMapping ***)malloc(gridDimX * sizeof(MeshMapping **));
     if (!mapping) {
-        fprintf(stderr, "[E] Could not allocate mapping memory\n");
+        fprintf(stderr,
+                "[E] Could not allocate mapping memory (gridDimX=%zd)\n",
+                gridDimX);
         abort();
     }
 
     for (index k = 0; k < gridDimX; k++) {
         mapping[k] = (MeshMapping **)malloc(gridDimY * sizeof(MeshMapping *));
         if (!mapping[k]) {
-            fprintf(stderr, "[E] Could not allocate mapping memory\n");
+            fprintf(stderr,
+                    "[E] Could not allocate mapping memory (gridDimY=%zd)\n",
+                    gridDimY);
             abort();
         }
     }

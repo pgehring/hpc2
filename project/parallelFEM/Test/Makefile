@@ -10,7 +10,9 @@ ifdef OPT
   CFLAGS += -g -O3 -funroll-loops -DNDEBUG # -Wpedantic
 endif
 
-CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -O3
+DEBUG =
+
+CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) $(DEBUG) -O3
 I = -I../Include
 
 LDLIBS += -lm

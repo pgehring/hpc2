@@ -109,4 +109,13 @@ double F_vol(double x[2], index typ);
 #define HPC_CSR(A) (A && (A->nz == -2))
 #define HPC_TRIPLET(A) (A && (A->nz >= 0))
 
+#ifdef _DEBUG
+#define DEBUG_PRINT(fmt, ...)              \
+    do {                                   \
+        fprintf(stderr, fmt, __VA_ARGS__); \
+    } while (0)
+#else
+#define DEBUG_PRINT(fmt, ...) (void)0
+#endif
+
 #endif

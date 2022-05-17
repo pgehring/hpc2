@@ -1,67 +1,15 @@
-make --dry-run --always-make --keep-going --print-directory
+make --dry-run --keep-going --print-directory
 make: Entering directory '/home/moxx/Projects/hpc2/project/parallelFEM'
 ( cd Lib ; make )
- 
 make[1]: Entering directory '/home/moxx/Projects/hpc2/project/parallelFEM/Lib'
-gcc    -fPIC -I../Include -c ../Source/sed_buildS.c
-gcc    -fPIC -I../Include -c ../Source/sed_dupl.c
-gcc    -fPIC -I../Include -c ../Source/sed_gaxpy.c
-gcc    -fPIC -I../Include -c ../Source/sed_print.c
-gcc    -fPIC -I../Include -c ../Source/sed_gs_constr.c
-gcc    -fPIC -I../Include -c ../Source/sed_util.c
-gcc    -fPIC -I../Include -c ../Source/hpc_cumsum.c
-gcc    -fPIC -I../Include -c ../Source/hpc_malloc.c
-gcc    -fPIC -I../Include -c ../Source/hpc_fmg.c
-gcc    -fPIC -I../Include -c ../Source/hpc_mg.c
-gcc    -fPIC -I../Include -c ../Source/hpc_mg_cycle.c
-gcc    -fPIC -I../Include -c ../Source/mesh_buildRhs.c
-gcc    -fPIC -I../Include -c ../Source/mesh_load.c
-gcc    -fPIC -I../Include -c ../Source/hpc_prol.c
-gcc    -fPIC -I../Include -c ../Source/hpc_prol_quad.c
-gcc    -fPIC -I../Include -c ../Source/mesh_getEdge2no.c
-gcc    -fPIC -I../Include -c ../Source/hpc_rest.c
-gcc    -fPIC -I../Include -c ../Source/mesh_print.c
-gcc    -fPIC -I../Include -c ../Source/mesh_refine.c
-gcc    -fPIC -I../Include -c ../Source/mesh_getFixed.c
-gcc    -fPIC -I../Include -c ../Source/mesh_util.c
-gcc    -fPIC -I../Include -c ../Source/mesh_split.c
-gcc    -fPIC -I../Include -c ../Source/slices.c
-ar rv  libhpc.a sed_buildS.o sed_dupl.o sed_gaxpy.o sed_print.o sed_gs_constr.o sed_util.o hpc_cumsum.o hpc_malloc.o hpc_fmg.o hpc_mg.o hpc_mg_cycle.o mesh_buildRhs.o mesh_load.o hpc_prol.o hpc_prol_quad.o mesh_getEdge2no.o hpc_rest.o mesh_print.o mesh_refine.o mesh_getFixed.o mesh_util.o mesh_split.o slices.o
-ranlib libhpc.a
+make[1]: Nothing to be done for 'all'.
 make[1]: Leaving directory '/home/moxx/Projects/hpc2/project/parallelFEM/Lib'
 ( cd Demo ; make )
- 
 make[1]: Entering directory '/home/moxx/Projects/hpc2/project/parallelFEM/Demo'
 ( cd ../Lib ; make )
  
 make[2]: Entering directory '/home/moxx/Projects/hpc2/project/parallelFEM/Lib'
-gcc    -fPIC -I../Include -c ../Source/sed_buildS.c
-gcc    -fPIC -I../Include -c ../Source/sed_dupl.c
-gcc    -fPIC -I../Include -c ../Source/sed_gaxpy.c
-gcc    -fPIC -I../Include -c ../Source/sed_print.c
-gcc    -fPIC -I../Include -c ../Source/sed_gs_constr.c
-gcc    -fPIC -I../Include -c ../Source/sed_util.c
-gcc    -fPIC -I../Include -c ../Source/hpc_cumsum.c
-gcc    -fPIC -I../Include -c ../Source/hpc_malloc.c
- 
-gcc    -fPIC -I../Include -c ../Source/hpc_fmg.c
-gcc    -fPIC -I../Include -c ../Source/hpc_mg.c
- 
-gcc    -fPIC -I../Include -c ../Source/hpc_mg_cycle.c
-gcc    -fPIC -I../Include -c ../Source/mesh_buildRhs.c
-gcc    -fPIC -I../Include -c ../Source/mesh_load.c
-gcc    -fPIC -I../Include -c ../Source/hpc_prol.c
-gcc    -fPIC -I../Include -c ../Source/hpc_prol_quad.c
-gcc    -fPIC -I../Include -c ../Source/mesh_getEdge2no.c
-gcc    -fPIC -I../Include -c ../Source/hpc_rest.c
-gcc    -fPIC -I../Include -c ../Source/mesh_print.c
-gcc    -fPIC -I../Include -c ../Source/mesh_refine.c
-gcc    -fPIC -I../Include -c ../Source/mesh_getFixed.c
-gcc    -fPIC -I../Include -c ../Source/mesh_util.c
-gcc    -fPIC -I../Include -c ../Source/mesh_split.c
-gcc    -fPIC -I../Include -c ../Source/slices.c
-ar rv  libhpc.a sed_buildS.o sed_dupl.o sed_gaxpy.o sed_print.o sed_gs_constr.o sed_util.o hpc_cumsum.o hpc_malloc.o hpc_fmg.o hpc_mg.o hpc_mg_cycle.o mesh_buildRhs.o mesh_load.o hpc_prol.o hpc_prol_quad.o mesh_getEdge2no.o hpc_rest.o mesh_print.o mesh_refine.o mesh_getFixed.o mesh_util.o mesh_split.o slices.o
-ranlib libhpc.a
+make[2]: Nothing to be done for 'all'.
 make[2]: Leaving directory '/home/moxx/Projects/hpc2/project/parallelFEM/Lib'
  
 gcc    -O3 -I../Include -o hpc_demo1 hpc_demo1.c  ../Lib/libhpc.a -lm
@@ -69,42 +17,20 @@ gcc    -O3 -I../Include -o hpc_demo2 hpc_demo2.c  ../Lib/libhpc.a -lm
 ./hpc_demo1 problem1 2
 ./hpc_demo1 problem1 4
 make[1]: Leaving directory '/home/moxx/Projects/hpc2/project/parallelFEM/Demo'
+ 
 ( cd Test ; make )
  
 make[1]: Entering directory '/home/moxx/Projects/hpc2/project/parallelFEM/Test'
 ( cd ../Lib ; make )
  
 make[2]: Entering directory '/home/moxx/Projects/hpc2/project/parallelFEM/Lib'
-gcc    -fPIC -I../Include -c ../Source/sed_buildS.c
-gcc    -fPIC -I../Include -c ../Source/sed_dupl.c
-gcc    -fPIC -I../Include -c ../Source/sed_gaxpy.c
-gcc    -fPIC -I../Include -c ../Source/sed_print.c
-gcc    -fPIC -I../Include -c ../Source/sed_gs_constr.c
-gcc    -fPIC -I../Include -c ../Source/sed_util.c
-gcc    -fPIC -I../Include -c ../Source/hpc_cumsum.c
-gcc    -fPIC -I../Include -c ../Source/hpc_malloc.c
-gcc    -fPIC -I../Include -c ../Source/hpc_fmg.c
-gcc    -fPIC -I../Include -c ../Source/hpc_mg.c
-gcc    -fPIC -I../Include -c ../Source/hpc_mg_cycle.c
-gcc    -fPIC -I../Include -c ../Source/mesh_buildRhs.c
-gcc    -fPIC -I../Include -c ../Source/mesh_load.c
-gcc    -fPIC -I../Include -c ../Source/hpc_prol.c
-gcc    -fPIC -I../Include -c ../Source/hpc_prol_quad.c
-gcc    -fPIC -I../Include -c ../Source/mesh_getEdge2no.c
-gcc    -fPIC -I../Include -c ../Source/hpc_rest.c
-gcc    -fPIC -I../Include -c ../Source/mesh_print.c
-gcc    -fPIC -I../Include -c ../Source/mesh_refine.c
-gcc    -fPIC -I../Include -c ../Source/mesh_getFixed.c
-gcc    -fPIC -I../Include -c ../Source/mesh_util.c
- 
-gcc    -fPIC -I../Include -c ../Source/mesh_split.c
-gcc    -fPIC -I../Include -c ../Source/slices.c
-ar rv  libhpc.a sed_buildS.o sed_dupl.o sed_gaxpy.o sed_print.o sed_gs_constr.o sed_util.o hpc_cumsum.o hpc_malloc.o hpc_fmg.o hpc_mg.o hpc_mg_cycle.o mesh_buildRhs.o mesh_load.o hpc_prol.o hpc_prol_quad.o mesh_getEdge2no.o hpc_rest.o mesh_print.o mesh_refine.o mesh_getFixed.o mesh_util.o mesh_split.o slices.o
-ranlib libhpc.a
+make[2]: Nothing to be done for 'all'.
 make[2]: Leaving directory '/home/moxx/Projects/hpc2/project/parallelFEM/Lib'
  
-gcc    -O3 -I../Include -o test_mesh_split test_mesh_split.c  ../Lib/libhpc.a -lm
+gcc    -D_DEBUG -O3 -I../Include -o test_mesh_split test_mesh_split.c  ../Lib/libhpc.a -lm
+ 
 ./test_mesh_split
 make[1]: Leaving directory '/home/moxx/Projects/hpc2/project/parallelFEM/Test'
+ 
 make: Leaving directory '/home/moxx/Projects/hpc2/project/parallelFEM'
  
