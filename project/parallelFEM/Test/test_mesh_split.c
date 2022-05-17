@@ -3,13 +3,13 @@
 #include "hpc.h"
 
 #ifndef GRID_M
-#define GRID_M 2
+#define GRID_M	4 
 #endif
 #ifndef GRID_N
-#define GRID_N 2
+#define GRID_N	3
 #endif
 #ifndef N_TESTRUNS_MAPPING
-#define N_TESTRUNS_MAPPING 10
+#define N_TESTRUNS_MAPPING 3
 #endif
 
 
@@ -294,8 +294,8 @@ bool testNodePartitioning(mesh *globalMesh, index *gridDims, int numRefines) {
 		resultCurrent = (refCount == tstCount &&
 				refBndryCnts == tstBndryCnts)?1:0;		
 
-		printf("%-4td|(%td,%td)|%-14td|%-14td|%-8td|%-8td|%-5s\n", i, k,
-                       l, refCount, tstCount, refBndryCnts, tstBndryCnts,
+		printf("%-4td|(%td,%td)|%-14td|%-14td|%-8td|%-8td|%-5s\n", i, l,
+                       k, refCount, tstCount, refBndryCnts, tstBndryCnts,
 		       resultCurrent? "true":"FALSE");
 		
 		// Set test Result to false if current test did not pass
