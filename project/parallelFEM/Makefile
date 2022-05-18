@@ -18,6 +18,7 @@ test:
 clean:
 	( cd Lib ; $(MAKE) clean )
 	( cd Demo ; $(MAKE) clean )
+	( cd Test ; $(MAKE) clean )
 
 purge:
 	( cd Lib ; $(MAKE) purge )
