@@ -51,3 +51,11 @@ sed *sed_free(sed *A) {
     free(A);
     return NULL;
 }
+
+/* free workspace and return a sparse matrix result */
+sed *sed_done(sed *C, void *w, void *x, index ok)
+{
+    free(w); /* free workspace */
+    free(x);
+    return (ok ? C : sed_free(C)); /* return result if OK, else free it */
+}
