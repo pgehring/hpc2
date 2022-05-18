@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <time.h>
 
 #include "hpc.h"
 
