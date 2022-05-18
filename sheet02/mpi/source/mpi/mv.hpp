@@ -3,7 +3,7 @@
 
 #include <mpi.h>
 
-#include <aux/slices.hpp>
+#include <util/slices.hpp>
 #include <cassert>
 #include <cstddef>
 #include <mpi/fundamental.hpp>
