@@ -161,46 +161,6 @@ void collectLocalBndryCounts(index *buffer, MeshMapping ***mapping,
     }
 }
 
-/**
-  * @brief perform initial refinement of the mesh to make the split possible
-           (mesh dimensions must be greater than grid dimension)
-  * @param globalMesh unrefined mesh
-  * @param gridDims array of dimensions of MPI grid
-*/
-mesh *initRefinement(mesh *globalMesh, index gridDims[2]) {
-    /** define initial refinement, such that the dimensions of the mesh are
-        greater than the grid dimensions */
-    index nofInitRefinements = HPC_MAX(gridDims[0], gridDims[1]);
-    printf("nofInitRefinements=%zd\n", nofInitRefinements);
-    mesh *mesh_current;
-    mesh *mesh_previous;
-
-    // first refinement to initialize variable mesh_current
-    mesh_current = mesh_refine(globalMesh);
-    mesh_getEdge2no(mesh_current->nelem, mesh_current->elem,
-                    &mesh_current->nedges, &mesh_current->edge2no);
-    mesh_current->fixed =
-        mesh_getFixed(mesh_current->ncoord, mesh_current->bdry,
-                      mesh_current->nbdry, &mesh_current->nfixed);
-
-    // Further refinements are performed iteratively
-    for (index i = 0; i < nofInitRefinements; ++i) {
-        mesh_previous = mesh_current;
-        // Overwrite mesh_current
-        mesh_current = mesh_refine(mesh_current);
-        mesh_getEdge2no(mesh_current->nelem, mesh_current->elem,
-                        &mesh_current->nedges, &mesh_current->edge2no);
-        mesh_current->fixed =
-            mesh_getFixed(mesh_current->ncoord, mesh_current->bdry,
-                          mesh_current->nbdry, &mesh_current->nfixed);
-        // free the memory space of the previous mesh
-        mesh_free(mesh_previous);
-    }
-
-    return mesh_current;
-}
-
-
 
 /**
   * @brief Test for the mapping of vertices, elements and boundaries from the
@@ -213,7 +173,8 @@ bool testMapping(mesh *globalMesh, index *gridDims){
     bool testResult = 0;
     
     // initial refinement of the mesh to make the split possible
-    mesh *mesh_refined = initRefinement(globalMesh, gridDims);
+    index initial_Refines = HPC_MAX(gridDims[0],gridDims[1]); 
+    mesh *mesh_refined = mesh_initRefinement(globalMesh, initial_Refines);
     // spliet the mesh and thus create a mapping
     MeshMapping ***testMapping = mesh_split(mesh_refined,gridDims);
     
@@ -250,8 +211,8 @@ bool testNodePartitioning(mesh *globalMesh, index *gridDims, int numRefines) {
 
     // initial refinement of the mesh to make the mapping possible according to
     // the mpi grid
-    mesh_current = initRefinement(globalMesh, gridDims);
     index initialRefines = HPC_MAX(gridDims[0], gridDims[1]);
+    mesh_current = mesh_initRefinement(globalMesh, initialRefines);
 
     printf("\n%-4s|%-5s|%-14s|%-14s|%-8s|%-8s|%-5s\n", "ref", "(i,j)",
            "cnt nodes ref", "cnt nodes tst", "bdry ref", "bdry tst", "pass");

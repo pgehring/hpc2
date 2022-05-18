@@ -66,7 +66,8 @@ HPC = \
  mesh_getFixed.o  \
  mesh_util.o \
  mesh_split.o \
- slices.o
+ mesh_initRefinement.o \
+ slices.o 
 
 
 $(HPC): ../Include/hpc.h Makefile

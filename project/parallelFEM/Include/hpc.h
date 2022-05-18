@@ -103,6 +103,11 @@ void hpc_prol_quad(double *x, double *y, index *elem, index nC, index nT,
 double kappa(double x[2], index typ);
 double F_vol(double x[2], index typ);
 
+
+// routines for testing
+mesh *mesh_initRefinement(mesh *globalMesh, index nof_ref);
+
+
 #define HPC_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define HPC_MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define HPC_CSC(A) (A && (A->nz == -1))
