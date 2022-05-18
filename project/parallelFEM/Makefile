@@ -15,6 +15,9 @@ library:
 test:
 	( cd Test ; $(MAKE) )
 
+demo:
+	( cd Demo ; $(MAKE) )
+
 clean:
 	( cd Lib ; $(MAKE) clean )
 	( cd Demo ; $(MAKE) clean )
