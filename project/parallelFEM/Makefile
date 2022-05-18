@@ -22,5 +22,6 @@ clean:
 purge:
 	( cd Lib ; $(MAKE) purge )
 	( cd Demo ; $(MAKE) purge )
+	( cd Test ; $(MAKE) purge )
 
 

@@ -31,5 +31,5 @@ clean:
 	- $(RM) *.o
 
 purge: clean
-	- $(RM) -r hpc_demo1 hpc_demo2 hpc_demo3 hpc_demo4 hpc_demo5 \
+	- $(RM) -r test_mesh_split \
     *.a *.dSYM *.obj *.dll
