@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <limits.h>
 #include <math.h>
+#include <mpi.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -112,6 +113,7 @@ mesh *mesh_initRefinement(mesh *globalMesh, index nof_ref);
 // Vector functions
 double *newVector(index);
 double *newVectorWithInit(index);
+void accumulateVector(MeshMapping *, double *, MPI_Comm);
 
 #define HPC_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define HPC_MIN(a, b) (((a) < (b)) ? (a) : (b))
