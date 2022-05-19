@@ -1,5 +1,5 @@
 
-CC = gcc
+CC = mpicc
 
 ifdef OPENMP
   CFLAGS += -g -fopenmp 
@@ -18,14 +18,18 @@ I = -I../Include
 LDLIBS += -lm
 CS = $(LDFLAGS) ../Lib/libhpc.a $(LDLIBS)
 
-all: lib test_mesh_split
-	- ./test_mesh_split
+all: lib test_mesh_split test_vec_accumulate
 
 lib:
 	( cd ../Lib ; $(MAKE) )
 
 test_mesh_split: lib test_mesh_split.c Makefile
-	$(CC) $(CF) $(I) -o $@ $@.c $(CS)
+	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
+	- ./$@
+
+test_vec_accumulate: lib test_vec_accumulate.c Makefile
+	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
+	- mpirun -np 4 ./$@
 
 clean:
 	- $(RM) *.o
