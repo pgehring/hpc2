@@ -194,7 +194,7 @@ index getGridIndexOfBdryVertex(mesh *globalMesh,                 //
  * @param gridDims The dimensions of the grid (MPI_Cart_get(..., gridDims, ...))
  * @return MeshMapping *** This is a 2D-array of dimensions gridDims
  */
-MeshMapping ***mesh_split(mesh *globalMesh, index gridDims[2]) {
+MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
     // Dimensions of the 2d MPI grid
     index gridDimX = gridDims[0];
     index gridDimY = gridDims[1];

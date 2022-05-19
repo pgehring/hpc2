@@ -69,7 +69,9 @@ index mesh_print(const mesh *M, index brief);
 mesh *mesh_refine(mesh *In);
 index mesh_getEdge2no(const index nElem, const index *Elem, index *nEdges,
                       index **edge2no);
-MeshMapping ***mesh_split(mesh *, index[2]);
+
+// Mesh splint and mapping functions
+MeshMapping ***mesh_split(mesh *, int[2]);
 MeshMapping *newMeshMapping(mesh *, index);
 void deleteMeshMapping(MeshMapping *);
 MeshMapping ***new2DMeshMapping(index, index);
@@ -106,6 +108,10 @@ double F_vol(double x[2], index typ);
 
 // routines for testing
 mesh *mesh_initRefinement(mesh *globalMesh, index nof_ref);
+
+// Vector functions
+double *newVector(index);
+double *newVectorWithInit(index);
 
 #define HPC_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define HPC_MIN(a, b) (((a) < (b)) ? (a) : (b))
