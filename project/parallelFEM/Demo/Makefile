@@ -1,5 +1,5 @@
 
-CC = gcc
+CC = mpicc
 
 ifdef OPENMP
   CFLAGS += -fopenmp 
