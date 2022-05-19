@@ -40,6 +40,7 @@ typedef struct MeshMapping {
     index *vertexL2G; /* local to global vertex mapping */
     index *elemL2G;   /* local to global elem mapping */
     index *bdryL2G;   /* local to global bdry mapping */
+    index globalNcoord;
 } MeshMapping;
 
 // Utility functions
@@ -69,7 +70,7 @@ mesh *mesh_refine(mesh *In);
 index mesh_getEdge2no(const index nElem, const index *Elem, index *nEdges,
                       index **edge2no);
 MeshMapping ***mesh_split(mesh *, index[2]);
-MeshMapping *newMeshMapping(mesh *);
+MeshMapping *newMeshMapping(mesh *, index);
 void deleteMeshMapping(MeshMapping *);
 MeshMapping ***new2DMeshMapping(index, index);
 void delete2DMeshMapping(MeshMapping ***, index);
@@ -103,10 +104,8 @@ void hpc_prol_quad(double *x, double *y, index *elem, index nC, index nT,
 double kappa(double x[2], index typ);
 double F_vol(double x[2], index typ);
 
-
 // routines for testing
 mesh *mesh_initRefinement(mesh *globalMesh, index nof_ref);
-
 
 #define HPC_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define HPC_MIN(a, b) (((a) < (b)) ? (a) : (b))

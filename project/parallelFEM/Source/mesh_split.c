@@ -233,7 +233,7 @@ MeshMapping ***mesh_split(mesh *globalMesh, index gridDims[2]) {
             // Allocate mesh and mapping memory
             mesh *localMesh = mesh_alloc(lncoord, lnelem, lnbdry);
             localMesh->nedges = lnedges;
-            mapping[k][l] = newMeshMapping(localMesh);
+            mapping[k][l] = newMeshMapping(localMesh, gncoord);
         }
     }
 
