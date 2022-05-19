@@ -12,8 +12,11 @@ index *mesh_load_index(char *fname, index cols, index *rows) {
     rows[0] = cnt / cols;
     if (cnt - rows[0] * cols) {
         fclose(file);
-        printf("\nmesh_load_index() Error!!! cnt = %g, rows %g\n\n",
-               (double)cnt, (double)rows[0]);
+        printf(
+            "\nmesh_load_index() Error!!! cnt = %g, rows %g\n\n",  // Ausrufezeichen
+                                                                   // sind keine
+                                                                   // Rudeltiere
+            (double)cnt, (double)rows[0]);
         return (NULL);
     }
 
