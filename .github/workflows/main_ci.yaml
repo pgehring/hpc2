@@ -27,7 +27,7 @@ jobs:
         echo ${PATH}
         echo ${LD_LIBRARY_PATH}
     - name: make
-      run: make
+      run: make && source ~/.bashrc
     - uses: actions/checkout@v3
     - name: purge project
       run: cd project/parallelFEM && make purge
@@ -54,7 +54,7 @@ jobs:
         echo ${PATH}
         echo ${LD_LIBRARY_PATH}
     - name: make
-      run: make
+      run: make && source ~/.bashrc
     - uses: actions/checkout@v3
     - name: purge project
       run: cd project/parallelFEM && make purge
