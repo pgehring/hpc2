@@ -1,6 +1,19 @@
 #include "hpc.h"
 
-
+/**
+  * @brief function to transfer the metadata, i.e the counts of vertices, elements
+	   etc. from root to the respective nonroot process. The metadata is needed
+	   to allocate memory for the mesh and mapping data from the nonroot process.
+  * @param  *buffer buffer for the metadata on the receiving nonroot process.
+	    Can be nullpointer for the root process calling the function.
+  * @param  ***mapping pointer to two dimensional array of MeshMapping structs i.e
+	    the global mapping stored on root. Can be nullpointer for nonroot
+	    processes calling the function
+  * @param  rankRecv rank of the receiving nonroot process in the MPI grid
+  * @param  indXRecv X-Index of the receiving nonroot process in the MPI grid
+  * @param  indYRecv Y-Index of the receiving nonroot process in the MPI grid
+  * @param  grid MPI communication domain organized in a two dimensional grid
+*/
 void transfer_Metadata(index *buffer, MeshMapping ***mapping, int rankRecv,
 			   int indXRecv, int indYRecv, MPI_Comm grid){
     int rank; MPI_Comm_rank(grid, &rank);
@@ -15,7 +28,7 @@ void transfer_Metadata(index *buffer, MeshMapping ***mapping, int rankRecv,
 			     mapping[indXRecv][indYRecv]->localMesh->nfixed,
 			     mapping[0][0]->globalNcoord};
 
-	printf("Sending metadata: [%td,%td,%td,%td,%td,%td]\n",
+	DEBUG_PRINT("Sending metadata: [%td,%td,%td,%td,%td,%td]\n",
 		sendData[0], sendData[1], sendData[2], sendData[3],
 		sendData[4], sendData[5]);
 
@@ -29,6 +42,21 @@ void transfer_Metadata(index *buffer, MeshMapping ***mapping, int rankRecv,
 	
 }
 
+/**
+  * @brief function to transfer the mesh data from root to the respective nonroot
+	   process. Since the local MappingStructs only contain pointers associated
+	   to the memory regions of the data, the data of each region have to be
+	   transferred seperately.
+  * @param ***mapping pointer to two dimensional array of MeshMapping objects i.e
+	   the global mapping. Can be nullpointer for nonroot processes calling
+	   the function.
+  * @param rankRecv rank of the receiving nonroot process in the MPI grid
+  * @param *localMesh pointer to local MeshMapping struct of the nonroot process.
+	   Can be nullpointer for root process calling the function.
+  * @param indXRecv, X-Index of the receiving nonroot process in the MPI grid
+  * @param indYRecv, Y-Index of the receiving nonroot process in the MPI grid
+  * @param grid MPI communication domain organized in a two dimensional grid
+*/
 void transfer_MeshData(MeshMapping ***mapping, int rankRecv, mesh *localMesh,
 		      int indXRecv, int indYRecv, MPI_Comm grid){
     
@@ -43,7 +71,7 @@ void transfer_MeshData(MeshMapping ***mapping, int rankRecv, mesh *localMesh,
 	index nEdge2no = mapping[indXRecv][indYRecv]->localMesh->nedges*2;
 
 	// Transfer coordinates
-	printf("Sending meshdata to rank %d\n",rankRecv);
+	DEBUG_PRINT("Sending meshdata to rank %d\n",rankRecv);
 	// Send coordinates
 	MPI_Send(mapping[indXRecv][indYRecv]->localMesh->coord, nCoord,
 		MPI_DOUBLE, rankRecv, 20, grid);
@@ -56,13 +84,13 @@ void transfer_MeshData(MeshMapping ***mapping, int rankRecv, mesh *localMesh,
 	MPI_Send(mapping[indXRecv][indYRecv]->localMesh->bdry, nBdry,
 	MPI_LONG_LONG, rankRecv, 22, grid);
 
-	printf("Mesh data sent to rank %d\n",rankRecv);
+	DEBUG_PRINT("Mesh data sent to rank %d\n",rankRecv);
 
     } else{
 	// Receive coordinates
 	MPI_Status status;
 	index recvCount;
-	printf("Rank %d, retrieving mesh data\n",rank);
+	DEBUG_PRINT("Rank %d, retrieving mesh data\n",rank);
 	
 	// Receive coordinates 
 	MPI_Recv(localMesh->coord, localMesh->ncoord, MPI_DOUBLE, 0, 20,
@@ -76,26 +104,42 @@ void transfer_MeshData(MeshMapping ***mapping, int rankRecv, mesh *localMesh,
 	MPI_Recv(localMesh->bdry, localMesh->nbdry, MPI_LONG_LONG, 0, 22,
 	grid,&status);
 
-	printf("Rank %d, received mesh data!\n",rank);
+	DEBUG_PRINT("Rank %d, received mesh data!\n",rank);
 
     }
 
 
 }
 
+/**
+  * @brief  function to transfer the mapping data, that is associated with the
+	    pointers in the local MeshMapping struct, from root to the respective
+	    process.  
+  * @param  ***globalMapping pointer to two dimensional array of MeshMapping structs
+	    i.e. the global mapping. Can be a nullpointer for nonroot processes 
+	    calling the function
+  * @param  *localMapping pointer to MappingStruct of the respective nonroot process.
+	    the associated memory region contains pointers to the local mapping data
+	    for the process. Can be nullpointer for the root process calling the function
+  * @param  rankRecv rank of the process, the data shall be transferred to
+  * @param  indXRecv X-index of the target process in the MPI grid
+  * @param  indYRecv Y-index of the target process in the MPI grid
+  * @param  grid MPI communication domain, i.e. the MPI grid 
+*/
 void transfer_MappingData(MeshMapping ***globalMapping, MeshMapping *localMapping,
 			  int rankRecv, int indXRecv, int indYRecv, MPI_Comm grid){
 
     int rank; MPI_Comm_rank(grid, &rank);
     index ncoord, nelem, nbdry;
 
+    // Send the data from root to process with rank=rankRecv
     if (rank==0){
 	ncoord = globalMapping[indXRecv][indYRecv]->localMesh->ncoord;
 	nelem = globalMapping[indXRecv][indYRecv]->localMesh->nelem;
 	nbdry = globalMapping[indXRecv][indYRecv]->localMesh->nbdry;
 
-	printf("Sending Mapping data to %d\n",rankRecv);
-	// Transfer verted mapping
+	DEBUG_PRINT("Sending Mapping data to %d\n",rankRecv);
+	// Transfer vertex mapping
 	MPI_Send(globalMapping[indXRecv][indYRecv]->vertexL2G, ncoord,
 		MPI_LONG_LONG, rankRecv, 30, grid);
 
@@ -107,13 +151,15 @@ void transfer_MappingData(MeshMapping ***globalMapping, MeshMapping *localMappin
 	MPI_Send(globalMapping[indXRecv][indYRecv]->bdryL2G, nbdry,
 		MPI_LONG_LONG, rankRecv, 31, grid);
 
-	printf("mapping sent to %d\n",rankRecv);
+	DEBUG_PRINT("mapping sent to %d\n",rankRecv);
+
+    // Receive mapping data on process with rank=rankRecv
     } else{
 	index ncoord = localMapping->localMesh->ncoord;
 	index nelem = localMapping->localMesh->nelem;
 	index nbdry = localMapping->localMesh->nbdry;
 
-	printf("rank %d receiving mappin data\n",rank);
+	DEBUG_PRINT("rank %d receiving mappin data\n",rank);
 	MPI_Status status;
 
 	// Receive vertex mapping
@@ -127,12 +173,22 @@ void transfer_MappingData(MeshMapping ***globalMapping, MeshMapping *localMappin
 	// Receive boundary mapping
 	MPI_Recv(localMapping->bdryL2G, nbdry, MPI_LONG_LONG, 0, 31, grid,
 		 &status);
-	printf("rank %d received mapping data from root!\n",rank);
+	DEBUG_PRINT("rank %d received mapping data from root!\n",rank);
     }
 }
 
 
-
+/**
+  * @brief function to transfer the local mapping objects with local meshes,
+	   stored in memory on the root process, to the other worker processes.
+	   Function can be called by the root and nonroot processes likewise. In
+	   the latter case, the parameter ***globalMapping can be a Nullpointer.
+  * @param ***globalMapping pointer to two dimensional array of structs MeshMapping
+	   can be a Nullpointer for nonroot processes
+  * @param grid two dimensional MPI grid, created using MPI_Cart_create()
+  * @return pointer to local MeshMapping struct in the memory of the respective
+	    process.
+*/
 MeshMapping *mesh_transfer(MeshMapping ***globalMapping, MPI_Comm grid){
     int rank; MPI_Comm_rank(grid, &rank);
 
@@ -151,14 +207,14 @@ MeshMapping *mesh_transfer(MeshMapping ***globalMapping, MPI_Comm grid){
 	    // Get grid coords for current rank
 	    MPI_Cart_coords(grid, recvRank, 2, proc_coords);
 
-	    printf("Process with rank %d has coords (%d,%d)\n",recvRank,
+	    DEBUG_PRINT("Process with rank %d has coords (%d,%d)\n",recvRank,
 		   proc_coords[0], proc_coords[1]);
 	
 	    // Send metadata of the mesh from root to other processe
 	    transfer_Metadata(metadata, globalMapping, recvRank, proc_coords[0],
 	    		proc_coords[1], grid);
 
-	    printf("Going to transfer mesh data to Rank %d\n",recvRank);
+	    DEBUG_PRINT("Going to transfer mesh data to Rank %d\n",recvRank);
 
 	    // Send the mesh data
 	    transfer_MeshData(globalMapping, recvRank, localMesh, proc_coords[0],
@@ -184,7 +240,7 @@ MeshMapping *mesh_transfer(MeshMapping ***globalMapping, MPI_Comm grid){
 	localMesh->nedges = metadata[2];
 	localMesh->nfixed = metadata[4];
 
-	printf("rank %d received Data: [%td,%td,%td,%td,%td,%td]\n",rank,
+	DEBUG_PRINT("rank %d received Data: [%td,%td,%td,%td,%td,%td]\n",rank,
 	       localMesh->ncoord, localMesh->nelem, localMesh->nedges,
 	       localMesh->nbdry,localMesh->nfixed,metadata[5] );
 
