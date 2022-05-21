@@ -1,5 +1,4 @@
 #include <mpi.h>
-
 #include "hpc.h"
 
 #ifndef MPI_GRID_X 
@@ -18,7 +17,6 @@ int main(int argc, char**argv){
     int rank; MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     int dims[2] = {MPI_GRID_X,MPI_GRID_Y};
     int periods[2] = {false,false};
-    index gridDims[2] = {2,2};
     
     bool resultTotal = 1;
 
@@ -32,7 +30,10 @@ int main(int argc, char**argv){
 
     MeshMapping ***mapping;
     mesh *m1;
-    mesh *meshRefined, *localMesh;
+    mesh *meshRefined;
+    MeshMapping *localMapping;
+    
+    // root: load and refine mesh, send local meshes
     if (rank==0){
 	printf("\n=== Start test_mesh_transfer ==\n");	
 	
@@ -45,25 +46,29 @@ int main(int argc, char**argv){
 	meshRefined = mesh_initRefinement(m1, HPC_MAX(dims[0],dims[1]));
 
 	// create mapping
-	mapping = mesh_split(meshRefined, gridDims);
+	mapping = mesh_split(meshRefined, dims);
 
 	// transfer local meshes
-	localMesh = mesh_transfer(mapping, grid);
+	localMapping = mesh_transfer(mapping, grid);
+    } else{
+	localMapping = mesh_transfer(mapping, grid);
     }
 
     // If rank=0 free the mapping the refined mesh and the base mesh
     if (rank ==0){
-	delete2DMeshMapping(mapping, gridDims[0]);
+	delete2DMeshMapping(mapping, dims[0]);
 	mesh_free(meshRefined);
 	mesh_free(m1);
 
     // if rank!=0 free the local mesh
     } else{
-	mesh_free(localMesh);
+	if (localMapping != NULL){
+	    mesh_free(localMapping->localMesh);
+	    deleteMeshMapping(localMapping);
+	}
     }
 
-    int size; MPI_Type_size(MPI_LONG_LONG, &size);
-    printf("Size of Type MPI_LONG_LONG: %d\n",size);
+    printf("\nProcess with rank %d ending Test!\n",rank);    
 
     MPI_Finalize();
 }
