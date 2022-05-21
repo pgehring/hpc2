@@ -77,6 +77,8 @@ MeshMapping *newMeshMapping(mesh *, index);
 void deleteMeshMapping(MeshMapping *);
 MeshMapping ***new2DMeshMapping(index, index);
 void delete2DMeshMapping(MeshMapping ***, index);
+MeshMapping *mesh_transfer(MeshMapping ***globalMapping, MPI_Comm grid);
+
 
 // Slice functions
 index getSliceOffset(index, index, index);

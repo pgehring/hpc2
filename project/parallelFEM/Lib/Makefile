@@ -68,6 +68,7 @@ HPC = \
  mesh_split.o \
  mesh_initRefinement.o \
  slices.o \
+ mesh_transfer.o \
  vec_accumulate.o \
  vec_util.o
 
