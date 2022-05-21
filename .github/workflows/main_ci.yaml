@@ -7,35 +7,41 @@ on:
     branches: [ main ]
 
 jobs:
-  # build_project:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - name: download-openmpi
-  #     run: wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.2.tar.gz
-  #   - name: extract-openmpi
-  #     run: tar -xvf ./openmpi-4.1.2.tar.gz
-  #   - name: configure-openmpi
-  #     run: ./openmpi-4.1.2/configure --prefix="/home/${USER}/.openmpi"
-  #   - name: install-openmpi
-  #     run: |
-  #       make -j
-  #       sudo make install
-  #   - name: set-openmpi-path
-  #     run: |
-  #       export PATH=${PATH}:/home/${USER}/.openmpi/bin/
-  #       export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/${USER}/.openmpi/lib/
-  #       echo ${PATH}
-  #       echo ${LD_LIBRARY_PATH}
-  #   - name: make
-  #     run: |
-  #       make
-  #       ls /home/${USER}/.openmpi/bin/
-  #       echo $PATH
-  #   - uses: actions/checkout@v3
-  #   - name: purge project
-  #     run: cd project/parallelFEM && make purge
-  #   - name: run demos
-  #     run: cd project/parallelFEM && make demo
+  build_project:
+    runs-on: ubuntu-latest
+    steps:
+    - name: download-openmpi
+      run: wget https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-4.1.2.tar.gz
+    - name: extract-openmpi
+      run: tar -xvf ./openmpi-4.1.2.tar.gz
+    - name: configure-openmpi
+      run: ./openmpi-4.1.2/configure --prefix="/home/${USER}/.openmpi"
+    - name: install-openmpi
+      run: |
+        make -j
+        sudo make install
+    - name: set-openmpi-path
+      run: |
+        export PATH=${PATH}:/home/${USER}/.openmpi/bin/
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/${USER}/.openmpi/lib/
+        echo ${PATH}
+        echo ${LD_LIBRARY_PATH}
+    - name: make
+      run: |
+        make
+        ls /home/${USER}/.openmpi/bin/
+        echo $PATH
+    - uses: actions/checkout@v3
+    - name: purge project
+      run: |
+        export PATH=${PATH}:/home/${USER}/.openmpi/bin/
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/${USER}/.openmpi/lib/
+        cd project/parallelFEM && make purge
+    - name: run demos
+      run: |
+        export PATH=${PATH}:/home/${USER}/.openmpi/bin/
+        export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/home/${USER}/.openmpi/lib/
+        cd project/parallelFEM && make demo
 
   test_project:
     runs-on: ubuntu-latest
