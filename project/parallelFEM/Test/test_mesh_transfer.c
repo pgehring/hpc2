@@ -35,7 +35,7 @@ int main(int argc, char**argv){
     
     // root: load and refine mesh, send local meshes
     if (rank==0){
-	printf("\n=== Start test_mesh_transfer ==\n");	
+	DEBUG_PRINT("\n=== Start test_mesh_transfer ==\n");	
 	
 	// Load basic mesh
 	mesh *m1 = mesh_load(fname);
@@ -68,7 +68,7 @@ int main(int argc, char**argv){
 	}
     }
 
-    printf("\nProcess with rank %d ending Test!\n",rank);    
+    DEBUG_PRINT("\nProcess with rank %d ending Test!\n",rank);    
 
     MPI_Finalize();
 }
