@@ -22,7 +22,7 @@ mesh *mesh_initRefinement(mesh *globalMesh, index nof_ref) {
                       mesh_current->nbdry, &mesh_current->nfixed);
 
     // Further refinements are performed iteratively
-    for (index i = 0; i < nof_ref; ++i) {
+    for (index i = 1; i < nof_ref; ++i) {
         mesh_previous = mesh_current;
         // Overwrite mesh_current
         mesh_current = mesh_refine(mesh_current);
