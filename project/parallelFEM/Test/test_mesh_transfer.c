@@ -2,11 +2,11 @@
 #include <math.h>
 
 #ifndef MPI_GRID_X 
-#define MPI_GRID_X  4
+#define MPI_GRID_X  2
 #endif
 
 #ifndef MPI_GRID_Y
-#define MPI_GRID_Y  3
+#define MPI_GRID_Y  2
 #endif
 
 #ifndef NUM_MESH_REFINES

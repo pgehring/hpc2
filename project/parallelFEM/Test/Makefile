@@ -33,6 +33,7 @@ test_vec_accumulate: lib test_vec_accumulate.c Makefile
 
 test_mesh_transfer: lib test_mesh_transfer.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
+	- mpirun -np 4 ./$@
 
 clean:
 	- $(RM) *.o
