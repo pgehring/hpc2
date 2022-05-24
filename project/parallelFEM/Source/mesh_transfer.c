@@ -73,15 +73,15 @@ void transfer_MeshData(MeshMapping ***mapping, int rankRecv, mesh *localMesh,
 	// Transfer coordinates
 	DEBUG_PRINT("Sending meshdata to rank %d\n",rankRecv);
 	// Send coordinates
-	MPI_Send(mapping[indXRecv][indYRecv]->localMesh->coord, nCoord,
+	MPI_Send(mapping[indXRecv][indYRecv]->localMesh->coord,2*nCoord,
 		MPI_DOUBLE, rankRecv, 20, grid);
 	
 	// Send elements
-	MPI_Send(mapping[indXRecv][indYRecv]->localMesh->elem, nElem,
+	MPI_Send(mapping[indXRecv][indYRecv]->localMesh->elem, 7*nElem,
 		MPI_LONG_LONG, rankRecv, 21, grid);
 
 	// Send boundary
-	MPI_Send(mapping[indXRecv][indYRecv]->localMesh->bdry, nBdry,
+	MPI_Send(mapping[indXRecv][indYRecv]->localMesh->bdry, 4*nBdry,
 	MPI_LONG_LONG, rankRecv, 22, grid);
 
 	DEBUG_PRINT("Mesh data sent to rank %d\n",rankRecv);
@@ -93,15 +93,15 @@ void transfer_MeshData(MeshMapping ***mapping, int rankRecv, mesh *localMesh,
 	DEBUG_PRINT("Rank %d, retrieving mesh data\n",rank);
 	
 	// Receive coordinates 
-	MPI_Recv(localMesh->coord, localMesh->ncoord, MPI_DOUBLE, 0, 20,
+	MPI_Recv(localMesh->coord, 2*localMesh->ncoord, MPI_DOUBLE, 0, 20,
 		grid,&status);
 	
 	// Receive elements
-	MPI_Recv(localMesh->elem, localMesh->nelem, MPI_LONG_LONG, 0, 21,
+	MPI_Recv(localMesh->elem, 7*localMesh->nelem, MPI_LONG_LONG, 0, 21,
 	grid,&status);
 
 	// Receive boundary
-	MPI_Recv(localMesh->bdry, localMesh->nbdry, MPI_LONG_LONG, 0, 22,
+	MPI_Recv(localMesh->bdry, 4*localMesh->nbdry, MPI_LONG_LONG, 0, 22,
 	grid,&status);
 
 	DEBUG_PRINT("Rank %d, received mesh data!\n",rank);
