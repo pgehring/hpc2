@@ -71,7 +71,7 @@ mesh *mesh_refine(mesh *In);
 index mesh_getEdge2no(const index nElem, const index *Elem, index *nEdges,
                       index **edge2no);
 
-// Mesh splint and mapping functions
+// Mesh split and mapping functions
 MeshMapping ***mesh_split(mesh *, int[2]);
 MeshMapping *newMeshMapping(mesh *, index);
 void deleteMeshMapping(MeshMapping *);
@@ -79,6 +79,10 @@ MeshMapping ***new2DMeshMapping(index, index);
 void delete2DMeshMapping(MeshMapping ***, index);
 MeshMapping *mesh_transfer(MeshMapping ***globalMapping, MPI_Comm grid);
 
+// Functions for building stiffness matrix and rhs
+sed *sed_sm_build(mesh *localMesh);
+void mesh_build_rhs(const mesh *localMesh, double *b, double (*fV)(double *,index),
+		    double (*fN)(double *, index));
 
 // Slice functions
 index getSliceOffset(index, index, index);

@@ -50,6 +50,7 @@ HPC = \
  sed_print.o \
  sed_gs_constr.o \
  sed_util.o  \
+ sed_sm_build.o \
  hpc_cumsum.o \
  hpc_malloc.o \
  hpc_fmg.o  \
@@ -67,6 +68,7 @@ HPC = \
  mesh_util.o \
  mesh_split.o \
  mesh_initRefinement.o \
+ mesh_build_rhs.o \
  slices.o \
  mesh_transfer.o \
  vec_accumulate.o \

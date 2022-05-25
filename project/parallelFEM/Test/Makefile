@@ -35,6 +35,9 @@ test_mesh_transfer: lib test_mesh_transfer.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
 	- mpirun -np 4 ./$@
 
+test_build_sm: lib test_build_sm.c Makefile
+	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
+	
 clean:
 	- $(RM) *.o
 
