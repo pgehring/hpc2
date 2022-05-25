@@ -10,6 +10,7 @@ sed *sed_alloc(index n, index nzmax, index values) {
     }
     /* define dimensions and nzmax */
     A->nzmax = nzmax = HPC_MAX(nzmax, n + 1);
+    A->n = n;
     A->i = (index *)malloc(nzmax * sizeof(index));
     if (!A->i) {
         printf("[E] Could not allocate index array in sed struct\n");
