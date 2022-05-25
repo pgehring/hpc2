@@ -42,5 +42,5 @@ clean:
 	- $(RM) *.o
 
 purge: clean
-	- $(RM) -r test_mesh_split \
+	- $(RM) -r test_mesh_split test_mesh_transfer test_vec_accumulate \
     *.a *.dSYM *.obj *.dll
