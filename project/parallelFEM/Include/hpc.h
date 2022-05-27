@@ -23,6 +23,20 @@ typedef struct sed_sparse { /* matrix in sparse matrix in compressed col. */
     double *x;              /* numerical values, size i[n] */
 } sed;
 
+
+typedef struct cs_sparse /* matrix in compressed-row/col or triplet form */
+{
+    index nzmax ;     /* maximum number of entries */
+    index m ;         /* number of rows */
+    index n ;         /* number of columns */
+    index *p ;        /* col/row pointers (size n+1) or col indices (size nzmax) */
+    index *ind ;      /* row/col indices, size nzmax */
+    double *x ;       /* numerical values, size nzmax */
+    index nz ;        /* # of entries in triplet matrix, 
+                       * -1 for compressed-col, -2 for compressed-row */
+} cs ;
+
+
 typedef struct mesh_data { /* mesh */
     index ncoord;          /* number of coordinates */
     index nelem;           /* number of elements */
@@ -59,6 +73,14 @@ index sed_gaxpy(const sed *A, const double *x, double *y);
 index sed_dupl(sed *A);
 index sed_gs_constr(const sed *A, const double *b, double *x, double *w,
                     index *fixed, index nFixed, index forward);
+
+// useful CS functions for testing
+index cs_entry(cs *T, index i, index j, double x);
+index cs_print(const cs *A, index brief);
+index cs_spmv(const cs *A, const double *x, double *y, double alpha, double beta);
+cs *cs_alloc(index m, index n, index nzmax, index values, index typ);
+cs *cs_free(cs *A);
+index cs_realloc(cs *A, index nzmax);
 
 // Mesh functions
 mesh *mesh_alloc(index ncoord, index nelem, index nbdry);
