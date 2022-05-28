@@ -51,6 +51,7 @@ HPC = \
  sed_gs_constr.o \
  sed_util.o  \
  sed_sm_build.o \
+ sed_spmv_sym.o \
  cs_print.o \
  cs_util.o \
  cs_spmv.o \

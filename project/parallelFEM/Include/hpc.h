@@ -81,6 +81,8 @@ index cs_spmv(const cs *A, const double *x, double *y, double alpha, double beta
 cs *cs_alloc(index m, index n, index nzmax, index values, index typ);
 cs *cs_free(cs *A);
 index cs_realloc(cs *A, index nzmax);
+index cs_spmv_const(const cs *A, const double *x, double *y, double alpha, double beta,
+		    index *fixed, index nfixed);
 
 // Mesh functions
 mesh *mesh_alloc(index ncoord, index nelem, index nbdry);
@@ -142,6 +144,11 @@ mesh *mesh_initRefinement(mesh *globalMesh, index nof_ref);
 double *newVector(index);
 double *newVectorWithInit(index);
 void accumulateVector(MeshMapping *, double *, MPI_Comm);
+
+// Solver functions
+void sed_spmv_sym(const sed *A, const double *x, double *y, double alpha,
+		  double beta);
+
 
 #define HPC_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define HPC_MIN(a, b) (((a) < (b)) ? (a) : (b))
