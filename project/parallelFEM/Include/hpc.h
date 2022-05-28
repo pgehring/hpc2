@@ -144,6 +144,7 @@ mesh *mesh_initRefinement(mesh *globalMesh, index nof_ref);
 double *newVector(index);
 double *newVectorWithInit(index);
 void accumulateVector(MeshMapping *, double *, MPI_Comm);
+double dot_dist(double *x_ac, double *y_dist, size_t len, MPI_Comm grid);
 
 // Solver functions
 void sed_spmv_sym(const sed *A, const double *x, double *y, double alpha,
