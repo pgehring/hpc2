@@ -423,15 +423,10 @@ int main(int argc, char**argv){
 
 	// create mapping
 	mapping = mesh_split(meshRefined, dims);
-
+	}
+	
 	// transfer local meshes
 	localMapping = mesh_transfer(mapping, grid);
-
-    // Nonrot processes: Call method mesh_transfer to receive mesh and mapping
-    // data
-    } else{
-	localMapping = mesh_transfer(mapping, grid);
-    }
 
     // Root: do the testing
     if (rank==0){
