@@ -1,6 +1,8 @@
 #include <assert.h>
 #include "hpc.h"
 #include <math.h>
+#include <time.h>
+
 
 #ifndef GRID_M
 #define GRID_M 4

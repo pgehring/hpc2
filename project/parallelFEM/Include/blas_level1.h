@@ -141,7 +141,7 @@ void blasl1_iprint(index* data, size_t len){
 
 void blasl1_intprint(index* data, size_t len){
     for(size_t i=0;i<len;++i){
-	printf("%i\n", data[i]);
+	printf("%ti\n", data[i]);
     }
 }
 
