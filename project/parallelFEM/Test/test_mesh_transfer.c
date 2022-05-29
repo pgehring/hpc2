@@ -469,7 +469,7 @@ int main(int argc, char**argv){
     if (rank ==0){
 	delete2DMeshMapping(mapping, dims[0]);
 	mesh_free(meshRefined);
-	mesh_free(m1);
+	// mesh_free(m1);
 
     // if rank!=0 free the local mesh
     } else{
