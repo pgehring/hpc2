@@ -1,5 +1,6 @@
 #include "hpc.h"
 #include <math.h>
+#include <string.h>
 
 #ifndef MPI_GRID_X 
 #define MPI_GRID_X  2
@@ -64,6 +65,7 @@ bool testMeshMetadata(mesh *globalMesh, MeshMapping ***globalMapping,
     int rank; MPI_Comm_rank(grid, &rank);
     int nof_processes; MPI_Comm_size(grid, &nof_processes);
     bool testResult = 1;
+	char testRestultString[12] = "FALSE";
     double epsilon = pow(10,-15);
 
     if (rank==0){
@@ -92,10 +94,17 @@ bool testMeshMetadata(mesh *globalMesh, MeshMapping ***globalMapping,
 	     MPI_Status status;
 	     MPI_Recv(tstMetadata, 6, MPI_LONG_LONG, r, 1, grid, &status);
 	     rmse = index_computeRMSE(refMetadata, tstMetadata, 6);
+		 if (rmse<epsilon){
+			 strcpy(testRestultString,"true");
+			 testResult = 0;
+		 } else {
+			 strcpy(testRestultString,"FALSE");
+			 testResult	= 1;
+		 }
 	     printf("%-4s|(%d,%d)|%-8td|%-8td|%-8td|%-8td|%-8td|%-11td|%-1.3lf|%-5s\n",
 		    "tst",procCoords[0],procCoords[1],tstMetadata[0],tstMetadata[1],
 		    tstMetadata[2], tstMetadata[3],tstMetadata[4],tstMetadata[5],
-		    rmse,rmse<=epsilon?"true":"FALSE");
+		    rmse,testRestultString);
 	}
     }else{
 	// Collect metadata of the local mapping
@@ -108,6 +117,7 @@ bool testMeshMetadata(mesh *globalMesh, MeshMapping ***globalMapping,
 	// Send the metadata of the local mapping
 	MPI_Send(sendData, 6, MPI_LONG_LONG, 0, 1, grid);
     }
+	return testResult;
 }
 
 /**
@@ -448,7 +458,7 @@ int main(int argc, char**argv){
 	resultCurrent = testMappingData(mapping,localMapping,grid);
 	result = result?resultCurrent:result;
 
-	printf("\n--- Test result: %s\n",result?"PASS":"FAILED");
+	printf("\n--- Test result: %s\n",result==0?"PASS":"FAILED");
    
     // Nonroot: call the test functions to send data for testing
     } else{
