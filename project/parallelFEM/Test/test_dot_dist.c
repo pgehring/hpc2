@@ -155,11 +155,11 @@ int main(int argc, char**argv){
     // free all used memory
     free(localXVec);
     free(localYVec);
-    free(globalXVec);
-    free(globalYVec);
     
     if (rank==0){
-	printf("\n=== End test_dot_dist ===\n");
+        free(globalXVec);
+        free(globalYVec);
+        printf("\n=== End test_dot_dist ===\n");
     }
 
     MPI_Finalize();
