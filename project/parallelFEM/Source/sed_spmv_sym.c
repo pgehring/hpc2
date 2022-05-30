@@ -21,7 +21,7 @@ void sed_spmv_sym(const sed *A, const double *x, double *y, double alpha,
     // Update y if beta != 1
     if (beta != 1){
 	for (index j=0; j<A->n; ++j){
-	    y[j] = beta * y[j];
+	    y[j] = (beta==0)?0:beta * y[j];
 	}
     }
 
@@ -49,10 +49,9 @@ void sed_spmv_sym(const sed *A, const double *x, double *y, double alpha,
 	    for (index ptr=A->i[j]; ptr < A->i[j+1]; ++ptr){
 		rowInd = A->i[ptr];
 		aij = A->x[ptr];
-
-		// Calculate two elements using symmtery to spare computations
 		y[rowInd] += alpha*aij*x[colInd];
 		y[colInd] += alpha*aij*x[rowInd];
+
 	    }
 	}
     }
