@@ -40,7 +40,8 @@ void vec_print(double *x, index n){
 double *shareAccumulatedVector(double *vec, size_t n, MPI_Comm grid){
     int rank; MPI_Comm_rank(grid, &rank);
     int nof_processes; MPI_Comm_size(grid, &nof_processes);
-    double *localVec;
+
+    double *localVec = malloc((procUniqueShare+1)*sizeof(double));
 
     if (rank==0){
 	size_t offset;
@@ -59,19 +60,16 @@ double *shareAccumulatedVector(double *vec, size_t n, MPI_Comm grid){
 
 	// copy own slice
 	DEBUG_PRINT("rank 0 copying own data\n");
-	localVec = malloc((procUniqueShare+1)*sizeof(double));
 	for (size_t i=0; i<procUniqueShare+1; ++i){
 	    localVec[i] = vec[i];
 	}
     } else if (rank != nof_processes-1){
 	DEBUG_PRINT("rank %d receiving slice of vector from root\n",rank);
 	MPI_Status status;
-	localVec = malloc((procUniqueShare+1)*sizeof(double));
 	MPI_Recv(localVec, procUniqueShare+1, MPI_DOUBLE, 0, 1, grid, &status);
     } else{
 	DEBUG_PRINT("rank %d receiving slice of vector from root\n",nof_processes-1);
 	MPI_Status status;
-	localVec = malloc((procUniqueShare)*sizeof(double));
 	MPI_Recv(localVec, procUniqueShare, MPI_DOUBLE, 0, 1, grid, &status);
     }
 
@@ -82,9 +80,8 @@ double *shareAccumulatedVector(double *vec, size_t n, MPI_Comm grid){
 double *shareDistributedVector(double *vec, size_t n, MPI_Comm grid){
     int rank; MPI_Comm_rank(grid, &rank);
     
-    double *localVec;
     // share the vector
-    localVec = shareAccumulatedVector(vec,  n, grid);
+    double *localVec = shareAccumulatedVector(vec,  n, grid);
 
     if (rank==0){
 	// account for accumulation of the shared vectors (addition of overlapping
@@ -158,11 +155,11 @@ int main(int argc, char**argv){
     // free all used memory
     free(localXVec);
     free(localYVec);
-    free(globalXVec);
-    free(globalYVec);
     
     if (rank==0){
-	printf("\n=== End test_dot_dist ===\n");
+        free(globalXVec);
+        free(globalYVec);
+        printf("\n=== End test_dot_dist ===\n");
     }
 
     MPI_Finalize();

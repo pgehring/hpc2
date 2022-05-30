@@ -35,8 +35,8 @@ void transfer_Metadata(index *buffer, MeshMapping ***mapping, int rankRecv,
 	MPI_Send(sendData, 6, MPI_LONG_LONG, rankRecv, 1, grid);
 
     } else{
-	MPI_Status *status;
-	MPI_Recv(buffer, 6, MPI_LONG_LONG, 0, 1, grid, status);
+	MPI_Status status;
+	MPI_Recv(buffer, 6, MPI_LONG_LONG, 0, 1, grid, &status);
 
     }
 	

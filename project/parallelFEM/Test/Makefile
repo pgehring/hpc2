@@ -18,7 +18,7 @@ I = -I../Include
 LDLIBS += -lm
 CS = $(LDFLAGS) ../Lib/libhpc.a $(LDLIBS)
 
-all: lib test_mesh_split test_vec_accumulate test_mesh_transfer test_dot_dist
+all: lib test_mesh_split test_vec_accumulate test_mesh_transfer test_dot_dist test_sed_spmv
 
 lib:
 	( cd ../Lib ; $(MAKE) )
@@ -38,6 +38,10 @@ test_mesh_transfer: lib test_mesh_transfer.c Makefile
 test_build_sm: lib test_build_sm.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
 
+test_sed_spmv: lib test_sed_spmv.c Makefile
+	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
+	- ./$@
+
 test_dot_dist: lib test_dot_dist.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
 	- mpirun -np 4 ./$@
@@ -46,5 +50,5 @@ clean:
 	- $(RM) *.o
 
 purge: clean
-	- $(RM) -r test_mesh_split test_mesh_transfer test_vec_accumulate \
+	- $(RM) -r test_mesh_split test_mesh_transfer test_vec_accumulate test_build_sm test_dot_dist test_sed_spmv\
     *.a *.dSYM *.obj *.dll

@@ -3,7 +3,7 @@
 
 #include "hpc.h"
 
-void main(int argc, char** argv) {
+int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
 
     // Set up 2-dim grid
