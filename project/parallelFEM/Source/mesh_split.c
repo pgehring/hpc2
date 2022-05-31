@@ -208,6 +208,11 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
     index gMeshDim = (index)sqrt((double)gncoord);
     assert(gMeshDim * gMeshDim == gncoord);
 
+    // Allocate memory for indices, necessary for ordering
+    index indicesV[gridDimX][gridDimY];
+    index indicesI[gridDimX][gridDimY];
+    index indicesE[gridDimX][gridDimY];
+
     // Compute local mesh variables and allocate mesh and mapping memory
     for (index k = 0; k < gridDimX; k++) {
         for (index l = 0; l < gridDimY; l++) {
@@ -234,12 +239,17 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
             mesh *localMesh = mesh_alloc(lncoord, lnelem, lnbdry);
             localMesh->nedges = lnedges;
             mapping[k][l] = newMeshMapping(localMesh, gncoord);
+
+            // The V four nodes are first,
+            // after that we have the 2 * (lMeshDimX - 2) + 2 * (lMeshDimY - 2)
+            // E nodes, last come the remaining I nodes.
+            indicesV[k][l] = 0;
+            indicesE[k][l] = 4;
+            indicesI[k][l] = 2 * (lMeshDimX - 2) + 2 * (lMeshDimY - 2) + 4;
         }
     }
 
     // Assign vertices from global mesh to local meshes
-    index indices[gridDimX][gridDimY];
-    memset(indices, 0, gridDimX * gridDimY * sizeof(index));
     for (index i = 0; i < gncoord; i++) {
         // (x,y) are the plane indices of vertex i
         index x = getIndex(gMeshDim, getCoord(globalMesh, i, 0));
@@ -251,37 +261,66 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
 
         /**
          * If (x == offsetK and y == offsetL), then the current point is a V
-         * vertex. If the above does not hold, but (x == offsetK or y ==
-         * offsetL) is true, then the current point is an E vertex. Otherwise it
-         * is an I vertex.
+         * vertex.
+         * If the above does not hold, but (x == offsetK or y == offsetL) is
+         * true, then the current point is an E vertex.
+         * Otherwise it is an I vertex.
          */
         index offsetK = getSliceOffset(gMeshDim - 1, gridDimX, k);
         index offsetL = getSliceOffset(gMeshDim - 1, gridDimY, l);
-
         index k1 = k - 1;
         index l1 = l - 1;
-        if (k < gridDimX && l < gridDimY) {
-            insertCoord(globalMesh, i, mapping[k][l], indices[k][l]++);
-        }
-        if (k1 >= 0 && l < gridDimY && x == offsetK) {
-            insertCoord(globalMesh, i, mapping[k1][l], indices[k1][l]++);
-        }
-        if (k < gridDimX && l1 >= 0 && y == offsetL) {
-            insertCoord(globalMesh, i, mapping[k][l1], indices[k][l1]++);
-        }
-        if (k1 >= 0 && l1 >= 0 && x == offsetK && y == offsetL) {
-            insertCoord(globalMesh, i, mapping[k1][l1], indices[k1][l1]++);
+        if (x == offsetK && y == offsetL) {  // V
+            // We may have to insert the vertex into 4 meshes,
+            // i.e. in all directions
+            if (k < gridDimX && l < gridDimY) {
+                insertCoord(globalMesh, i, mapping[k][l], indicesV[k][l]++);
+            }
+            if (k1 >= 0 && l < gridDimY) {
+                insertCoord(globalMesh, i, mapping[k1][l], indicesV[k1][l]++);
+            }
+            if (k < gridDimX && l1 >= 0 && y == offsetL) {
+                insertCoord(globalMesh, i, mapping[k][l1], indicesV[k][l1]++);
+            }
+            if (k1 >= 0 && l1 >= 0 && x == offsetK && y == offsetL) {
+                insertCoord(globalMesh, i, mapping[k1][l1], indicesV[k1][l1]++);
+            }
+        } else if (x == offsetK) {  // E, on a | border
+            // We may have to insert the vertex into 2 meshes,
+            // i.e. east and west
+            if (k < gridDimX && l < gridDimY) {
+                insertCoord(globalMesh, i, mapping[k][l], indicesE[k][l]++);
+            }
+            if (k1 >= 0 && l < gridDimY) {
+                insertCoord(globalMesh, i, mapping[k1][l], indicesE[k1][l]++);
+            }
+        } else if (y == offsetL) {  // E, on a - border
+            // We may have to insert the vertex into 2 meshes,
+            // i.e. north and south
+            if (k < gridDimX && l < gridDimY) {
+                insertCoord(globalMesh, i, mapping[k][l], indicesE[k][l]++);
+            }
+            if (k < gridDimX && l1 >= 0) {
+                insertCoord(globalMesh, i, mapping[k][l1], indicesE[k][l1]++);
+            }
+        } else {  // I
+            assert(k < gridDimX);
+            assert(l < gridDimY);
+            insertCoord(globalMesh, i, mapping[k][l], indicesI[k][l]++);
         }
     }
 
     // Asserting that we got all elements
     for (index k = 0; k < gridDimX; k++) {
         for (index l = 0; l < gridDimY; l++) {
-            assert(indices[k][l] == mapping[k][l]->localMesh->ncoord);
+            assert(indicesV[k][l] == 4);
+            // assert(indicesE) Dafuer brauch ich lMeshDims
+            assert(indicesI[k][l] == mapping[k][l]->localMesh->ncoord);
         }
     }
 
     // Assign elements to local meshes
+    index indices[gridDimX][gridDimY];
     memset(indices, 0, gridDimX * gridDimY * sizeof(index));
     for (index i = 0; i < gnelem; i++) {
         index k1 =
