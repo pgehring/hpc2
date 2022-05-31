@@ -83,6 +83,7 @@ int main(int argc, char**argv){
 
     // build local rhs
     double *b = malloc(localMesh->ncoord*sizeof(double));
+    memset(b,0, localMesh->ncoord*sizeof(double));
     mesh_build_rhs(localMesh, b, F_vol, g_Neu); 
 
 
