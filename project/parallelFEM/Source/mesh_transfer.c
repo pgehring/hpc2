@@ -224,8 +224,10 @@ MeshMapping *mesh_transfer(MeshMapping ***globalMapping, MPI_Comm grid){
 				 proc_coords[1], grid);
 	
 	}
-
-	localMapping = globalMapping[0][0];
+	
+	// Get own coordinates
+	MPI_Cart_coords(grid, 0, 2, proc_coords);
+	localMapping = globalMapping[proc_coords[0]][proc_coords[1]];
 
     } else{
 	
