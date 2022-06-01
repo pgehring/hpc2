@@ -256,9 +256,7 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
             // Allocate mesh and mapping memory
             mesh *localMesh = mesh_alloc(lncoord, lnelem, lnbdry);
             localMesh->nedges = lnedges;
-            mapping[k][l] = newMeshMapping(localMesh, gncoord);
-            mapping[k][l]->lMeshDimX = lMeshDimX;
-            mapping[k][l]->lMeshDimY = lMeshDimY;
+            mapping[k][l] = newMeshMapping(localMesh, gncoord, lMeshDimX, lMeshDimY);
 
             // The V four nodes are first,
             // after that we have the 2 * (lMeshDimX - 2) + 2 * (lMeshDimY - 2)

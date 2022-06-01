@@ -98,7 +98,7 @@ index mesh_getEdge2no(const index nElem, const index *Elem, index *nEdges,
 
 // Mesh split and mapping functions
 MeshMapping ***mesh_split(mesh *, int[2]);
-MeshMapping *newMeshMapping(mesh *, index);
+MeshMapping *newMeshMapping(mesh *, index, index, index);
 void deleteMeshMapping(MeshMapping *);
 MeshMapping ***new2DMeshMapping(index, index);
 void delete2DMeshMapping(MeshMapping ***, index);
