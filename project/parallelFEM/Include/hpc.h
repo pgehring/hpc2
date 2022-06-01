@@ -149,6 +149,8 @@ double dot_dist(double *x_ac, double *y_dist, size_t len, MPI_Comm grid);
 // Solver functions
 void sed_spmv_sym(const sed *A, const double *x, double *y, double alpha,
 		  double beta);
+void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,
+	      double *u_glbl, MPI_Comm grid, double tol, index maxIt);
 
 
 #define HPC_MAX(a, b) (((a) > (b)) ? (a) : (b))

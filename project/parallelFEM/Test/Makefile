@@ -2,7 +2,7 @@
 CC = mpicc
 
 ifdef OPENMP
-  CFLAGS += -g -fopenmp 
+  CFLAGS += -g -wall -fopenmp 
   LDFLAGS += -g -fopenmp
 endif
 
@@ -43,6 +43,10 @@ test_sed_spmv: lib test_sed_spmv.c Makefile
 	- ./$@
 
 test_dot_dist: lib test_dot_dist.c Makefile
+	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
+	- mpirun -np 4 ./$@
+
+test_solver_cg: lib test_solver_cg.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
 	- mpirun -np 4 ./$@
 
