@@ -271,19 +271,30 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
         index k1 = k - 1;
         index l1 = l - 1;
         if (x == offsetK && y == offsetL) {  // V
+            // Numbering:
+            // 23
+            // 01
             // We may have to insert the vertex into 4 meshes,
             // i.e. in all directions
+            // north-east
             if (k < gridDimX && l < gridDimY) {
-                insertCoord(globalMesh, i, mapping[k][l], indicesV[k][l]++);
+                indicesV[k][l]++;
+                insertCoord(globalMesh, i, mapping[k][l], 3);
             }
+            // north-west
             if (k1 >= 0 && l < gridDimY) {
-                insertCoord(globalMesh, i, mapping[k1][l], indicesV[k1][l]++);
+                indicesV[k1][l]++;
+                insertCoord(globalMesh, i, mapping[k1][l], 2);
             }
+            // south-east
             if (k < gridDimX && l1 >= 0 && y == offsetL) {
-                insertCoord(globalMesh, i, mapping[k][l1], indicesV[k][l1]++);
+                indicesV[k][l1]++;
+                insertCoord(globalMesh, i, mapping[k][l1], 1);
             }
+            // south-wests
             if (k1 >= 0 && l1 >= 0 && x == offsetK && y == offsetL) {
-                insertCoord(globalMesh, i, mapping[k1][l1], indicesV[k1][l1]++);
+                indicesV[k1][l1]++;
+                insertCoord(globalMesh, i, mapping[k1][l1], 0);
             }
         } else if (x == offsetK) {  // E, on a | border
             // We may have to insert the vertex into 2 meshes,
