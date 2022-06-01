@@ -3,7 +3,7 @@
 #include "hpc.h"
 
 /**
- * @brief Get offset of slice i
+ * @brief Get offset in global array of slice i
  *
  * @param globalSize
  * @param nofSlices
@@ -22,7 +22,7 @@ index getSliceOffset(index globalSize, index nofSlices, index i) {
  * @param globalSize
  * @param nofSlices
  * @param i
- * @return index Size of size i
+ * @return index Size of slice i
  */
 index getSliceSize(index globalSize, index nofSlices, index i) {
     index q = globalSize / nofSlices;

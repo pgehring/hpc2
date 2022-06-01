@@ -23,19 +23,17 @@ typedef struct sed_sparse { /* matrix in sparse matrix in compressed col. */
     double *x;              /* numerical values, size i[n] */
 } sed;
 
-
 typedef struct cs_sparse /* matrix in compressed-row/col or triplet form */
 {
-    index nzmax ;     /* maximum number of entries */
-    index m ;         /* number of rows */
-    index n ;         /* number of columns */
-    index *p ;        /* col/row pointers (size n+1) or col indices (size nzmax) */
-    index *ind ;      /* row/col indices, size nzmax */
-    double *x ;       /* numerical values, size nzmax */
-    index nz ;        /* # of entries in triplet matrix, 
-                       * -1 for compressed-col, -2 for compressed-row */
-} cs ;
-
+    index nzmax; /* maximum number of entries */
+    index m;     /* number of rows */
+    index n;     /* number of columns */
+    index *p;    /* col/row pointers (size n+1) or col indices (size nzmax) */
+    index *ind;  /* row/col indices, size nzmax */
+    double *x;   /* numerical values, size nzmax */
+    index nz;    /* # of entries in triplet matrix,
+                  * -1 for compressed-col, -2 for compressed-row */
+} cs;
 
 typedef struct mesh_data { /* mesh */
     index ncoord;          /* number of coordinates */
@@ -43,11 +41,11 @@ typedef struct mesh_data { /* mesh */
     index nedges;          /* number of edges */
     index nbdry;           /* number of boundary elements */
     index nfixed;          /* number of fixed nodes */
-    double *coord;  /* coordinates (x1,y1,x2,y2, ... ,x_ncoord,y_ncoord) */
-    index *elem;    /* elements ([e1,e2,e3,m1,m2,m3,t1], ... ) */
-    index *edge2no; /* 404 */
-    index *bdry;    /* bdry ([e1,e2,m1,t1], [e3,e4,m2,t2], ...) */
-    index *fixed;   /* bdry ([e1,e2,m1,t1], [e3,e4,m2,t2], ...) */
+    double *coord;         /* coordinates (x1,y1,x2,y2, ... ,x_ncoord,y_ncoord) */
+    index *elem;           /* elements ([e1,e2,e3,m1,m2,m3,t1], ... ) */
+    index *edge2no;        /* 404 */
+    index *bdry;           /* bdry ([e1,e2,m1,t1], [e3,e4,m2,t2], ...) */
+    index *fixed;          /* bdry ([e1,e2,m1,t1], [e3,e4,m2,t2], ...) */
 } mesh;
 
 typedef struct MeshMapping {
@@ -56,6 +54,8 @@ typedef struct MeshMapping {
     index *elemL2G;   /* local to global elem mapping */
     index *bdryL2G;   /* local to global bdry mapping */
     index globalNcoord;
+    index lMeshDimX;
+    index lMeshDimY;
 } MeshMapping;
 
 // Utility functions
@@ -77,12 +77,13 @@ index sed_gs_constr(const sed *A, const double *b, double *x, double *w,
 // useful CS functions for testing
 index cs_entry(cs *T, index i, index j, double x);
 index cs_print(const cs *A, index brief);
-index cs_spmv(const cs *A, const double *x, double *y, double alpha, double beta);
+index cs_spmv(const cs *A, const double *x, double *y, double alpha,
+              double beta);
 cs *cs_alloc(index m, index n, index nzmax, index values, index typ);
 cs *cs_free(cs *A);
 index cs_realloc(cs *A, index nzmax);
-index cs_spmv_const(const cs *A, const double *x, double *y, double alpha, double beta,
-		    index *fixed, index nfixed);
+index cs_spmv_const(const cs *A, const double *x, double *y, double alpha,
+                    double beta, index *fixed, index nfixed);
 
 // Mesh functions
 mesh *mesh_alloc(index ncoord, index nelem, index nbdry);
@@ -97,7 +98,7 @@ index mesh_getEdge2no(const index nElem, const index *Elem, index *nEdges,
 
 // Mesh split and mapping functions
 MeshMapping ***mesh_split(mesh *, int[2]);
-MeshMapping *newMeshMapping(mesh *, index);
+MeshMapping *newMeshMapping(mesh *, index, index, index);
 void deleteMeshMapping(MeshMapping *);
 MeshMapping ***new2DMeshMapping(index, index);
 void delete2DMeshMapping(MeshMapping ***, index);
@@ -105,8 +106,9 @@ MeshMapping *mesh_transfer(MeshMapping ***globalMapping, MPI_Comm grid);
 
 // Functions for building stiffness matrix and rhs
 sed *sed_sm_build(mesh *localMesh);
-void mesh_build_rhs(const mesh *localMesh, double *b, double (*fV)(double *,index),
-		    double (*fN)(double *, index));
+void mesh_build_rhs(const mesh *localMesh, double *b,
+                    double (*fV)(double *, index),
+                    double (*fN)(double *, index));
 
 // Slice functions
 index getSliceOffset(index, index, index);
@@ -143,15 +145,17 @@ mesh *mesh_initRefinement(mesh *globalMesh, index nof_ref);
 // Vector functions
 double *newVector(index);
 double *newVectorWithInit(index);
+void accumulateVectorTrivially(MeshMapping *, double *, MPI_Comm);
 void accumulateVector(MeshMapping *, double *, MPI_Comm);
+void accumulateVectorV(double *, MPI_Comm, int[8]);
+void accumulateVectorE(MeshMapping *, double *, MPI_Comm, int[8]);
 double dot_dist(double *x_ac, double *y_dist, size_t len, MPI_Comm grid);
 
 // Solver functions
 void sed_spmv_sym(const sed *A, const double *x, double *y, double alpha,
-		  double beta);
+                  double beta);
 void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,
-	      double *u_glbl, MPI_Comm grid, double tol, index maxIt);
-
+              double *u_glbl, MPI_Comm grid, double tol, index maxIt);
 
 #define HPC_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define HPC_MIN(a, b) (((a) < (b)) ? (a) : (b))

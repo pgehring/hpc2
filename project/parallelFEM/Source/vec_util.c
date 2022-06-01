@@ -1,6 +1,19 @@
 #include "hpc.h"
 
 /**
+ * @brief Initializes the vector.
+ *
+ * @param n Length of vec
+ * @param vec Pointer to vector
+ * @param init Initial value
+ */
+void vectorInit(index n, double *vec, double init) {
+    for (index i = 0; i < n; i++) {
+        vec[i] = init;
+    }
+}
+
+/**
  * @brief Allocates memory for a double array of size n.
  * Aborts if there is not sufficient memory.
  *
@@ -26,8 +39,6 @@ double *newVector(index n) {
  */
 double *newVectorWithInit(index n) {
     double *vec = newVector(n);
-    for (index i = 0; i < n; i++) {
-        vec[i] = 0;
-    }
+    vectorInit(n, vec, 0);
     return vec;
 }

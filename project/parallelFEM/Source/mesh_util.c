@@ -47,7 +47,7 @@ void mesh_free(mesh *M) {
  * @param globalNcoords Global number of vertices
  * @return MeshMapping*
  */
-MeshMapping *newMeshMapping(mesh *localMesh, index globalNcoords) {
+MeshMapping *newMeshMapping(mesh *localMesh, index globalNcoords, index lMeshDimX, index lMeshDimY) {
     assert(localMesh != NULL);
 
     MeshMapping *mapping = (MeshMapping *)malloc(sizeof(MeshMapping));
@@ -61,6 +61,8 @@ MeshMapping *newMeshMapping(mesh *localMesh, index globalNcoords) {
     mapping->elemL2G = (index *)malloc(localMesh->nelem * sizeof(index));
     mapping->bdryL2G = (index *)malloc(localMesh->nbdry * sizeof(index));
     mapping->globalNcoord = globalNcoords;
+    mapping->lMeshDimX = lMeshDimX;
+    mapping->lMeshDimY = lMeshDimY;
 
     if (!mapping->vertexL2G || !mapping->elemL2G || !mapping->bdryL2G) {
         fprintf(stderr, "[E] Could not allocate mapping attributes\n");
