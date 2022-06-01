@@ -36,7 +36,7 @@ void testAccumulateVector(MPI_Comm grid) {
     m1->fixed = mesh_getFixed(m1->ncoord, m1->bdry, m1->nbdry, &m1->nfixed);
 
     // Refine mesh
-    index nofRefinements = 5;
+    index nofRefinements = 7;
     mesh* m2 = mesh_initRefinement(m1, nofRefinements);
     MeshMapping*** mappings = mesh_split(m2, dims);
 
