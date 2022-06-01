@@ -44,7 +44,7 @@ index vertexG2L(MeshMapping *mapping, index globalIndex) {
             return i;
         }
     }
-    printf("Local vertex not found!\n");
+    printf("Local vertex index for global vertex index %zu not found!\n", globalIndex);
     abort();
 }
 
@@ -58,6 +58,10 @@ index vertexG2L(MeshMapping *mapping, index globalIndex) {
  * @param j
  */
 void insertCoord(mesh *globalMesh, index i, MeshMapping *mapping, index j) {
+    assert(i >= 0);
+    assert(i < globalMesh->ncoord);
+    assert(j >= 0);
+    assert(j < mapping->localMesh->ncoord);
     mapping->localMesh->coord[2 * j] = globalMesh->coord[2 * i];
     mapping->localMesh->coord[2 * j + 1] = globalMesh->coord[2 * i + 1];
     mapping->vertexL2G[j] = i;
@@ -188,6 +192,20 @@ index getGridIndexOfBdryVertex(mesh *globalMesh,                 //
 }
 
 /**
+ * @brief This function returns the index local mesh index of an E vertex.
+ *
+ * @param xy The global x/y-index of the vertex
+ * @param offsetKL Offset of the slice to which vertex with index x/y belongs to
+ * @param offsetDir Offset depending on the cardinal direction
+ * @return index
+ */
+index getLocalBorderIndex(index xy, index offsetKL, index offsetDir) {
+    index i = 4 + (xy - 1) - offsetKL + offsetDir;
+    // printf("%s: %zd\n", lMeshDimXY == 0 ? "s/w" : "n/e", i);
+    return i;
+}
+
+/**
  * @brief Splits the mesh for the given grid dimension
  *
  * @param globalMesh The global mesh
@@ -302,19 +320,27 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
             // We may have to insert the vertex into 2 meshes,
             // i.e. east and west
             if (k < gridDimX && l < gridDimY) {
-                insertCoord(globalMesh, i, mapping[k][l], indicesE[k][l]++);
+                indicesE[k][l]++;
+                index offsetDir = 2 * (mapping[k][l]->lMeshDimX - 2);
+                insertCoord(globalMesh, i, mapping[k][l], getLocalBorderIndex(y, offsetL, offsetDir));
             }
             if (k1 >= 0 && l < gridDimY) {
-                insertCoord(globalMesh, i, mapping[k1][l], indicesE[k1][l]++);
+                indicesE[k1][l]++;
+                index offsetDir = 2 * (mapping[k1][l]->lMeshDimX - 2) + mapping[k1][l]->lMeshDimY - 2;
+                insertCoord(globalMesh, i, mapping[k1][l], getLocalBorderIndex(y, offsetL, offsetDir));
             }
         } else if (y == offsetL) {  // E, on a - border
             // We may have to insert the vertex into 2 meshes,
             // i.e. north and south
+            index offsetDir = 0;
             if (k < gridDimX && l < gridDimY) {
-                insertCoord(globalMesh, i, mapping[k][l], indicesE[k][l]++);
+                indicesE[k][l]++;
+                insertCoord(globalMesh, i, mapping[k][l], getLocalBorderIndex(x, offsetK, offsetDir));
             }
             if (k < gridDimX && l1 >= 0) {
-                insertCoord(globalMesh, i, mapping[k][l1], indicesE[k][l1]++);
+                indicesE[k][l1]++;
+                offsetDir += mapping[k][l1]->lMeshDimX - 2;
+                insertCoord(globalMesh, i, mapping[k][l1], getLocalBorderIndex(x, offsetK, offsetDir));
             }
         } else {  // I
             assert(k < gridDimX);
@@ -336,20 +362,14 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
     index indices[gridDimX][gridDimY];
     memset(indices, 0, gridDimX * gridDimY * sizeof(index));
     for (index i = 0; i < gnelem; i++) {
-        index k1 =
-            getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimX, i, 0, 0);
-        index k2 =
-            getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimX, i, 1, 0);
-        index k3 =
-            getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimX, i, 2, 0);
+        index k1 = getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimX, i, 0, 0);
+        index k2 = getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimX, i, 1, 0);
+        index k3 = getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimX, i, 2, 0);
         index k = HPC_MIN(k1, HPC_MIN(k2, k3));
 
-        index l1 =
-            getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimY, i, 0, 1);
-        index l2 =
-            getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimY, i, 1, 1);
-        index l3 =
-            getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimY, i, 2, 1);
+        index l1 = getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimY, i, 0, 1);
+        index l2 = getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimY, i, 1, 1);
+        index l3 = getGridIndexOfElemVertex(globalMesh, gMeshDim, gridDimY, i, 2, 1);
         index l = HPC_MIN(l1, HPC_MIN(l2, l3));
 
         insertElem(globalMesh, i, mapping[k][l], indices[k][l]++);
@@ -370,14 +390,10 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
                         mapping[i][j]->localMesh->nbdry);
 
     for (index i = 0; i < gnbdry; i++) {
-        index k1 =
-            getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimX, i, 0, 0);
-        index l1 =
-            getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimY, i, 0, 1);
-        index k2 =
-            getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimX, i, 1, 0);
-        index l2 =
-            getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimY, i, 1, 1);
+        index k1 = getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimX, i, 0, 0);
+        index l1 = getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimY, i, 0, 1);
+        index k2 = getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimX, i, 1, 0);
+        index l2 = getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimY, i, 1, 1);
         DEBUG_PRINT("%3zd | (%zd,%zd)-(%zd,%zd) | ", i, k1, l1, k2, l2);
         DEBUG_PRINT("(%5.3lf,%5.3lf)-(%5.3lf,%5.3lf) | ",
                     getCoord(globalMesh, globalMesh->bdry[4 * i], 0),
