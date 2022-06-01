@@ -3,22 +3,23 @@
 
 #include "hpc.h"
 
-void testAccumulateVectorV(MPI_Comm grid) {
-    int dims[2];
-    int periods[2];
-    int coords[2];
-    MPI_Cart_get(grid, 2, dims, periods, coords);
-
-    double vec[4] = {1, 10, 100, 1000};
-    accumulateVectorV(vec, grid);
-
-    if (coords[0] == 0 && coords[1] == 0) {
-        printf("%6lf - %6lf\n", vec[2], vec[3]);
-        printf("%6lf - %6lf\n", vec[0], vec[1]);
+void printTstArray(index n, double* vec) {
+    fprintf(stderr, "tst:");
+    for (int i = 0; i < n; i++) {
+        fprintf(stderr, "%12.0lf ", vec[i]);
     }
+    fprintf(stderr, "\n");
 }
 
-void testTrivialAccumulateVector(MPI_Comm grid) {
+void printRefArray(index n, double* vec, index* vertexL2G) {
+    fprintf(stderr, "ref:");
+    for (int i = 0; i < n; i++) {
+        fprintf(stderr, "%12.0lf ", vec[vertexL2G[i]]);
+    }
+    fprintf(stderr, "\n");
+}
+
+void testAccumulateVector(MPI_Comm grid) {
     int dims[2];
     int periods[2];
     int coords[2];
@@ -35,7 +36,7 @@ void testTrivialAccumulateVector(MPI_Comm grid) {
     m1->fixed = mesh_getFixed(m1->ncoord, m1->bdry, m1->nbdry, &m1->nfixed);
 
     // Refine mesh
-    index nofRefinements = HPC_MAX(dims[0], dims[1]);
+    index nofRefinements = 5;
     mesh* m2 = mesh_initRefinement(m1, nofRefinements);
     MeshMapping*** mappings = mesh_split(m2, dims);
 
@@ -48,9 +49,11 @@ void testTrivialAccumulateVector(MPI_Comm grid) {
     // Construct vector to accumulate
     double* vec = newVector(lncoord);
     for (index i = 0; i < lncoord; i++) {
-        vec[i] = rank * 1e+6 + i;
+        vec[i] = rank * 1e+3 + i;
     }
+
     accumulateVector(localMapping, vec, grid);
+    // accumulateVectorTrivially(localMapping, vec, grid);
 
     // Construct reference vector
     double* ref = newVectorWithInit(gncoord);
@@ -58,7 +61,7 @@ void testTrivialAccumulateVector(MPI_Comm grid) {
         MPI_Cart_coords(grid, r, 2, coords);
         MeshMapping* mapping = mappings[coords[0]][coords[1]];
         for (index i = 0; i < mapping->localMesh->ncoord; i++) {
-            ref[mapping->vertexL2G[i]] += r * 1e+6 + i;
+            ref[mapping->vertexL2G[i]] += r * 1e+3 + i;
         }
     }
 
@@ -72,6 +75,20 @@ void testTrivialAccumulateVector(MPI_Comm grid) {
     mesh_free(m2);
     mesh_free(m1);
 }
+
+// void testAccumulateVectorV(MPI_Comm grid) {
+//     int dims[2];
+//     int periods[2];
+//     int coords[2];
+//     MPI_Cart_get(grid, 2, dims, periods, coords);
+
+//     double vec[4] = {1, 10, 100, 1000};
+//     accumulateVectorV(vec, grid);
+
+//     fprintf(stderr, "(%d,%d)\n", coords[0], coords[1]);
+//     fprintf(stderr, "%6.0lf - %6.0lf\n", vec[2], vec[3]);
+//     fprintf(stderr, "%6.0lf - %6.0lf\n", vec[0], vec[1]);
+// }
 
 int main(int argc, char** argv) {
     MPI_Init(&argc, &argv);
@@ -92,7 +109,7 @@ int main(int argc, char** argv) {
         printf("\n=== Start test_vec_accumulate ===\n");
     }
 
-    testAccumulateVectorV(grid);
+    testAccumulateVector(grid);
 
     MPI_Finalize();
     if (rank == 0) {
