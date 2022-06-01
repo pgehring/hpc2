@@ -239,6 +239,8 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
             mesh *localMesh = mesh_alloc(lncoord, lnelem, lnbdry);
             localMesh->nedges = lnedges;
             mapping[k][l] = newMeshMapping(localMesh, gncoord);
+            mapping[k][l]->lMeshDimX = lMeshDimX;
+            mapping[k][l]->lMeshDimY = lMeshDimY;
 
             // The V four nodes are first,
             // after that we have the 2 * (lMeshDimX - 2) + 2 * (lMeshDimY - 2)
@@ -325,7 +327,7 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
     for (index k = 0; k < gridDimX; k++) {
         for (index l = 0; l < gridDimY; l++) {
             assert(indicesV[k][l] == 4);
-            // assert(indicesE) Dafuer brauch ich lMeshDims
+            assert(indicesE[k][l] == 2 * (mapping[k][l]->lMeshDimX - 2) + 2 * (mapping[k][l]->lMeshDimY - 2) + 4);
             assert(indicesI[k][l] == mapping[k][l]->localMesh->ncoord);
         }
     }

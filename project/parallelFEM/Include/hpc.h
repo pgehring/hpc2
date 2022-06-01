@@ -54,6 +54,8 @@ typedef struct MeshMapping {
     index *elemL2G;   /* local to global elem mapping */
     index *bdryL2G;   /* local to global bdry mapping */
     index globalNcoord;
+    index lMeshDimX;
+    index lMeshDimY;
 } MeshMapping;
 
 // Utility functions
