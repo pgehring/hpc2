@@ -15,16 +15,16 @@
 #
 
 CC = mpicc
-
+CFLAGS += -g
 LIBRARY = libhpc
 
 ifdef OPENMP
-  CFLAGS += -g -fopenmp 
-  LDFLAGS += -g -fopenmp
+  CFLAGS += -fopenmp 
+  LDFLAGS += -fopenmp
 endif
 
 ifdef OPT
-  CFLAGS += -g -O3 -funroll-loops -DNDEBUG -Wpedantic  # -mfpmath=sse #-march=native #
+  CFLAGS += -O3 -funroll-loops -DNDEBUG -Wpedantic  # -mfpmath=sse #-march=native #
 endif
 
 ifdef DEBUG
