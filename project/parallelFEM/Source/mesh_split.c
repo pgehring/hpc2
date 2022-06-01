@@ -297,22 +297,22 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
             // north-east
             if (k < gridDimX && l < gridDimY) {
                 indicesV[k][l]++;
-                insertCoord(globalMesh, i, mapping[k][l], 3);
+                insertCoord(globalMesh, i, mapping[k][l], 0);
             }
             // north-west
             if (k1 >= 0 && l < gridDimY) {
                 indicesV[k1][l]++;
-                insertCoord(globalMesh, i, mapping[k1][l], 2);
+                insertCoord(globalMesh, i, mapping[k1][l], 1);
             }
             // south-east
             if (k < gridDimX && l1 >= 0 && y == offsetL) {
                 indicesV[k][l1]++;
-                insertCoord(globalMesh, i, mapping[k][l1], 1);
+                insertCoord(globalMesh, i, mapping[k][l1], 2);
             }
             // south-wests
             if (k1 >= 0 && l1 >= 0 && x == offsetK && y == offsetL) {
                 indicesV[k1][l1]++;
-                insertCoord(globalMesh, i, mapping[k1][l1], 0);
+                insertCoord(globalMesh, i, mapping[k1][l1], 3);
             }
         } else if (x == offsetK) {  // E, on a | border
             // We may have to insert the vertex into 2 meshes,
