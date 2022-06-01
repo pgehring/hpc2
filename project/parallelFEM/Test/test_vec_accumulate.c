@@ -3,24 +3,30 @@
 
 #include "hpc.h"
 
-int main(int argc, char** argv) {
-    MPI_Init(&argc, &argv);
-
-    // Set up 2-dim grid
-    int nofProcesses;
-    MPI_Comm_size(MPI_COMM_WORLD, &nofProcesses);
-    int dims[2] = {0, 0};
-    MPI_Dims_create(nofProcesses, 2, dims);
-    int periods[2] = {0, 0};
-    MPI_Comm grid;
-    MPI_Cart_create(MPI_COMM_WORLD, 2, dims, periods, 1, &grid);
-    int rank;
-    MPI_Comm_rank(grid, &rank);
+void testAccumulateVectorV(MPI_Comm grid) {
+    int dims[2];
+    int periods[2];
     int coords[2];
-    MPI_Cart_coords(grid, rank, 2, coords);
-    if (rank == 0) {
-        printf("\n=== Start test_vec_accumulate ===\n");
+    MPI_Cart_get(grid, 2, dims, periods, coords);
+
+    double vec[4] = {1, 10, 100, 1000};
+    accumulateVectorV(vec, grid);
+
+    if (coords[0] == 0 && coords[1] == 0) {
+        printf("%6lf - %6lf\n", vec[2], vec[3]);
+        printf("%6lf - %6lf\n", vec[0], vec[1]);
     }
+}
+
+void testTrivialAccumulateVector(MPI_Comm grid) {
+    int dims[2];
+    int periods[2];
+    int coords[2];
+    int rank;
+    int nofProcesses;
+    MPI_Cart_get(grid, 2, dims, periods, coords);
+    MPI_Comm_rank(grid, &rank);
+    MPI_Comm_size(grid, &nofProcesses);
 
     // Load mesh
     char fname[32] = "../Problem/problem1";
@@ -65,6 +71,29 @@ int main(int argc, char** argv) {
     free(vec);
     mesh_free(m2);
     mesh_free(m1);
+}
+
+int main(int argc, char** argv) {
+    MPI_Init(&argc, &argv);
+
+    // Set up 2-dim grid
+    int nofProcesses;
+    MPI_Comm_size(MPI_COMM_WORLD, &nofProcesses);
+    int dims[2] = {0, 0};
+    MPI_Dims_create(nofProcesses, 2, dims);
+    int periods[2] = {0, 0};
+    MPI_Comm grid;
+    MPI_Cart_create(MPI_COMM_WORLD, 2, dims, periods, 1, &grid);
+    int rank;
+    MPI_Comm_rank(grid, &rank);
+    int coords[2];
+    MPI_Cart_coords(grid, rank, 2, coords);
+    if (rank == 0) {
+        printf("\n=== Start test_vec_accumulate ===\n");
+    }
+
+    testAccumulateVectorV(grid);
+
     MPI_Finalize();
     if (rank == 0) {
         printf("--- Total Result: PASS ---\n");
