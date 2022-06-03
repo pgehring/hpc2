@@ -60,6 +60,7 @@ blasl1_ddot(const double * x, const double * y, size_t len){
 void
 blasl1_daxpy(double* x, double* y, index length, double alpha, double beta){
     //x = beta*x + alpha*y
+    
     if(beta!=1){
 	for(size_t i=0; i<length; i++){
 	    x[i] = beta*x[i];

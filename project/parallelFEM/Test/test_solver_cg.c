@@ -9,7 +9,7 @@
 #define MPI_GRID_Y 2
 #endif
 #ifndef NUM_MESH_REFINES
-#define NUM_MESH_REFINES 2
+#define NUM_MESH_REFINES 1
 #endif
 
 /** Functions of neumann- and dirichlet boundary as well as the volume forces
@@ -58,29 +58,10 @@ void vec_print(size_t dim, double*x){
 }
 
 
-/** function to insert dirichlet boundary data in solution vector */
-void insertDirichlet(double *u_local, mesh *localMesh, double (*u_D)(double *)){
-    index nbdry = localMesh->nbdry;
-    index nodeInds[2];
-    double coords[2];
-
-    // Search for dirichlet boundaries
-    for (index i=0; i<nbdry; ++i){
-	if (!localMesh->bdry[4*i+3]){
-	    // Insert node indices of current boundary in vector
-	    nodeInds[0] = localMesh->bdry[4*i];
-	    nodeInds[1] = localMesh->bdry[4*i+1];
-
-	    // Get the boundary value for each node and write it to the
-	    // solution vector
-	    for (int k=0; k<2; ++k){
-		coords[0] = localMesh->coord[2*nodeInds[k]];	;
-		coords[1] = localMesh->coord[2*nodeInds[k]+1];
-		u_local[nodeInds[k]] = u_D(coords);
-	    }
-	}
+void printMapping(MeshMapping *localMapping){
+    for (index i=0; i<localMapping->localMesh->ncoord; ++i){
+	printf("%td: %td\n",i, localMapping->vertexL2G[i]);
     }
-
 }
 
 
@@ -107,8 +88,8 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
     mesh *meshRefined;
     MeshMapping *localMapping;
 
-    // Declare pointer to solution vectors
-    double *localSolCG, *glblSolCG;
+    // Declare pointer to solution vectors and right hand side
+    double *localSolCG, *glblSolCG, *rhs;
 
     // root: load and refine mesh, send local meshes
     if (rank==0){
@@ -136,7 +117,8 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
 	printf("Receiving mesh from root \n");
 	localMapping = mesh_transfer(mapping, grid);
     }
-
+    
+    // The local mesh
     mesh *localMesh = localMapping->localMesh;
 
     // Build the local stiffness matrices
@@ -147,41 +129,43 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
 				     localMesh->nbdry, &localMesh->nfixed);
     sed *sm_local = sed_sm_build(localMesh);
 
-    /**
-    if (rank==1){
-	printf("rank %d local sm\n",rank);
-	sed_print(sm_local,0);
-    }
-    */
-
     // build local rhs
-    double *b = malloc(localMesh->ncoord*sizeof(double));
-    memset(b, 0, localMesh->ncoord*sizeof(double));
-    mesh_build_rhs(localMesh, b, F_vol, g_Neu);
+    rhs = newVectorWithInit(localMesh->ncoord);
+    mesh_build_rhs(localMesh, rhs, F_vol, g_Neu);
 
-    /**
-    if (rank==1){
-	printf("Rank %d: local rhs:\n", rank);
-	vec_print(localMesh->ncoord, b);
-    }
-    */
-
-    // Synchronize all processes ONLY FOR PRETTY OUTPUT
+    // Synchronize all processes ONLY FOR PRETTY COMMANDLINE OUTPUT
     int msg=0; MPI_Bcast(&msg, 1, MPI_INT, 0, grid);
 
 
     // Solve using CG Solver 
     // -------------------------------------------------
+  
     // allocate and zero initialize result vector
-    localSolCG = malloc(localMesh->ncoord*sizeof(double));
-    memset(localSolCG, 0, localMesh->ncoord*sizeof(double));
-   
+    localSolCG = newVectorWithInit(localMesh->ncoord);
+    // insert dirichlet data for indices of fixed nodes
     insertDirichlet(localSolCG, localMesh, u_D);
-   
-    solve_cg(localMapping, sm_local, b, localSolCG, glblSolCG, grid, 10e-1,
-	     10);
+  
+    // Solve the problem using CG Solver
+    solve_cg(localMapping, sm_local, rhs, localSolCG, grid, 10e-10,
+	     50);
 
-    // If rank=0 free the mapping, the refined mesh and the base mesh
+    MPI_Barrier(grid);
+
+    for (int i=0; i<nof_processes; ++i){
+	if (rank == i){
+	    printf("rank %d solution: \n",rank);
+	    vec_print(localMapping->localMesh->ncoord, localSolCG);
+	    printf("rank %d mapping :\n",rank);
+	    printMapping(localMapping);
+	}
+	MPI_Barrier(grid);
+    }
+
+    // Accumulate the result (results only on root in actual global result)
+    printf("Accumulate Result\n");
+    glblSolCG = accumulateResult(localMapping, localSolCG, grid);   
+
+    // If rank=0 free the mapping, the refined mesh the base mesh and the
     if (rank ==0){
 	delete2DMeshMapping(mapping, dims[0]);
 	mesh_free(meshRefined);
@@ -258,7 +242,7 @@ double *solvePoissonRef(char *fname, int numRefines, double (*fV)(double *, inde
     x = (double *)calloc(n, sizeof(double)); /* get workspace for sol*/
     w = (double *)calloc(n, sizeof(double)); /* get temporary workspace */
     b = (double *)calloc(n, sizeof(double)); /* get workspace for rhs*/
-    mesh_buildRhs(H[N], b, fV,
+    mesh_build_rhs(H[N], b, fV,
                   fN); /* build rhs (volume and Neumann data */
     TIME_SAVE(2);
 
@@ -374,7 +358,7 @@ int main(int argc, char**argv){
     if (rank==0){
 	refSolP1 = solvePoissonRef(fname_p1, NUM_MESH_REFINES, F_vol, g_Neu);
 	printf("\nReference solution [0-5]: \n");
-	vec_print(5, refSolP1);		
+	vec_print(dimSolution, refSolP1);		
     }
 
     double *cgSolP1, rmseP1;
@@ -382,7 +366,7 @@ int main(int argc, char**argv){
 
     if (rank==0){
 	printf("\nSolution using CG [0-5]:\n");
-	vec_print(5, cgSolP1);
+	vec_print(dimSolution, cgSolP1);
 	rmseP1 = computeRMSE(dimSolution, refSolP1, cgSolP1);
 	printf("RMSE = %lf\n", rmseP1);
     }

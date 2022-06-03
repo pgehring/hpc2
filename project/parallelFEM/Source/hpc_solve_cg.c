@@ -12,8 +12,29 @@ void vector_print(double *x,index len){
     }
 }
 
+void blockFixedNodes(mesh *globalMesh, double *x){
+    index bdryInd[2];
+
+    // Go through all boundary edges and search for dirichlet boundaries
+    for (index i=0; i<globalMesh->nbdry; ++i){
+	if (!globalMesh->bdry[4*i+3]){
+	    // Get node index for dirichlet boundary edge
+	    bdryInd[0] = globalMesh->bdry[4*i];
+	    bdryInd[1] = globalMesh->bdry[4*i+1];
+	    
+	    // Fixe the corresponding entry in the vector
+	    x[bdryInd[0]] = 0;
+	    x[bdryInd[1]] = 0;
+	}
+
+    }
+}
+
+
+
+
 void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,
-	      double *u_glbl, MPI_Comm grid, double tol, index maxIt){
+	      MPI_Comm grid, double tol, index maxIt){
    
     int rank; MPI_Comm_rank(grid, &rank);
     index localDim =localMapping->localMesh->ncoord;
@@ -29,39 +50,47 @@ void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_lo
     s = newVectorWithInit(localDim);
 
     // Declare scalars
-    double sigma, sigmaOld, alpha, beta, sv;
+    double sigma, sigmaOld, sigma0, alpha, beta, sv;
 
     int nofProcesses; MPI_Comm_size(grid, &nofProcesses);
-
-
     int debugRank=-1;
 
-    // Initial computation of residual and its scalar product
-    
+    // Update right hand side to accomodate for dirichlet data
+    sed_spmv_sym(localSM, u_local, rhs, -1.0, 1.0);
+   
+
+
+    /* Initial computation of residual and its scalar product*/
     // Calculate matrix vectorprodukt Ku
     sed_spmv_sym(localSM, u_local, r, 1.0, 0); 
    
-    // calculate residuum
+    // calculate residuum r=b-Ku
     blasl1_daxpy(r, rhs, localDim, 1, -1);   
-
+    blockFixedNodes(localMapping->localMesh, r);
+    
     // copy residuum for accumulation
     blasl1_dcopy(r, w, localDim, 1);	     
 
     // accumulate residuum
     accumulateVector(localMapping, w, grid);	     
-   
+    blockFixedNodes(localMapping->localMesh, w);
+
+
     // Copy in vector of search direction
     blasl1_dcopy(w, s, localDim, 1);		     
     // calculate scalar product of residuum
     sigma = dot_dist(w,r,localDim,grid);	     
-    
+   
+    sigma0 = sigma;
     sigmaOld = sigma;
 
     /** Compute approximations iteratively */
     for (index iter=0; iter<maxIt; ++iter){
-	// Compute spmv K*s
-	sed_spmv_sym(localSM, s, v, 1.0, 0);        
 
+	// Compute spmv v=K*s and block fixed values in v
+	sed_spmv_sym(localSM, s, v, 1.0, 0);        
+	blockFixedNodes(localMapping->localMesh, v);
+	
 	// Compute step size
 	sv = dot_dist(s,v,localDim,grid);
 	alpha = sigma / sv;
@@ -74,7 +103,8 @@ void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_lo
 
 	// accumulate residuum
 	blasl1_dcopy(r, w, localDim, 1);	    
-	accumulateVector(localMapping, w, grid);    
+	accumulateVector(localMapping, w, grid);
+	blockFixedNodes(localMapping->localMesh, w);
 
 	// calculate scalar product of residuum
 	sigma = dot_dist(w,r,localDim,grid);	     
@@ -82,12 +112,15 @@ void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_lo
 
 	sigmaOld = sigma;
 
-
 	// calculate new search direction
 	blasl1_daxpy(s, w, localDim, 1, beta);
 
 	if (rank==1){
 	    printf("sigma=%lf\n",sigma);
+	}
+
+	if (sqrt(sigma/sigma0)<=tol){
+	    break;
 	}
     }
 
@@ -96,6 +129,7 @@ void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_lo
     free(w);
     free(r);
     free(v);
+
 }
 
 
