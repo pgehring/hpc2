@@ -2,26 +2,6 @@
 #include <mpi.h>
 #include "blas_level1.h"
 
-/**
-void blockFixedNodes(mesh *globalMesh, double *x){
-    index bdryInd[2];
-
-    // Go through all boundary edges and search for dirichlet boundaries
-    for (index i=0; i<globalMesh->nbdry; ++i){
-	if (!globalMesh->bdry[4*i+3]){
-	    // Get node index for dirichlet boundary edge
-	    bdryInd[0] = globalMesh->bdry[4*i];
-	    bdryInd[1] = globalMesh->bdry[4*i+1];
-	    
-	    // Fixe the corresponding entry in the vector
-	    x[bdryInd[0]] = 0;
-	    x[bdryInd[1]] = 0;
-	}
-
-    }
-}
-*/
-
 
 void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,
 	      MPI_Comm grid, double tol, index maxIt){

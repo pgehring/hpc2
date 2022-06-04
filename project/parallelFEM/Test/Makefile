@@ -33,7 +33,7 @@ test_vec_accumulate: lib test_vec_accumulate.c Makefile
 
 test_mesh_transfer: lib test_mesh_transfer.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
-	- mpirun -np 4 ./$@
+	- mpirun -np 8 ./$@
 
 test_build_sm: lib test_build_sm.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
@@ -48,7 +48,7 @@ test_dot_dist: lib test_dot_dist.c Makefile
 
 test_solver_cg: lib test_solver_cg.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
-	- mpirun -np 4 ./$@
+	- mpirun -np 8 ./$@
 
 clean:
 	- $(RM) *.o

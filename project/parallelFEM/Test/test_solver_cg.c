@@ -3,13 +3,13 @@
 #include <time.h>
 
 #ifndef MPI_GRID_X
-#define MPI_GRID_X 2
+#define MPI_GRID_X 4
 #endif
 #ifndef MPI_GRID_Y
 #define MPI_GRID_Y 2
 #endif
 #ifndef NUM_MESH_REFINES
-#define NUM_MESH_REFINES 1
+#define NUM_MESH_REFINES 2
 #endif
 
 /** Functions of neumann- and dirichlet boundary as well as the volume forces
@@ -129,7 +129,6 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
 	printf("Receiving mesh from root \n");
 	localMapping = mesh_transfer(mapping, grid);
     }
-
     // extract fixed nodes of local mesh
     mesh_getFixedNodes(localMapping);
 
@@ -163,7 +162,7 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
     // Accumulate the result (results only on root in actual global result)
     printf("Accumulate Result\n");
     glblSolCG = accumulateResult(localMapping, localSolCG, grid);   
-
+    
     // If rank=0 free the mapping, the refined mesh the base mesh and the
     if (rank ==0){
 	delete2DMeshMapping(mapping, dims[0]);

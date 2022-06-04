@@ -239,6 +239,9 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
             index lMeshDimX = getSliceSize(gMeshDim - 1, gridDimX, k) + 1;
             index lMeshDimY = getSliceSize(gMeshDim - 1, gridDimY, l) + 1;
 
+	    DEBUG_PRINT("[%td,%td] lMeshDimX=%td, lMeshDimY=%td\n",k,l,
+			lMeshDimX, lMeshDimY);
+
             // Compute local ncoord, nelem, nbdry
             index lncoord = lMeshDimX * lMeshDimY;
             index lnelem = 2 * (lMeshDimX - 1) * (lMeshDimY - 1);
@@ -246,12 +249,18 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
                             + lMeshDimY * (lMeshDimX - 1)         // - edges
                             + (lMeshDimX - 1) * (lMeshDimY - 1);  // / edges
             index lnbdry = 0;
-            if (k == 0 || k + 1 == gridDimX) {
+            if (k == 0) {
                 lnbdry += lMeshDimY - 1;
             }
-            if (l == 0 || l + 1 == gridDimY) {
+	    if (k +1 == gridDimX){
+		lnbdry += lMeshDimY -1;
+	    }
+            if (l == 0) {
                 lnbdry += lMeshDimX - 1;
             }
+	    if (l + 1 == gridDimY){
+		lnbdry += lMeshDimX -1;
+	    }
 
             // Allocate mesh and mapping memory
             mesh *localMesh = mesh_alloc(lncoord, lnelem, lnbdry);
@@ -382,10 +391,12 @@ MeshMapping ***mesh_split(mesh *globalMesh, int gridDims[2]) {
 
     // Assign boundary edges to local meshes
     memset(indices, 0, gridDimX * gridDimY * sizeof(index));
-    for (index i = 0; i < gridDimX; i++)
-        for (index j = 0; j < gridDimY; j++)
+    for (index i = 0; i < gridDimX; i++){
+        for (index j = 0; j < gridDimY; j++){
             DEBUG_PRINT("mapping[%zd][%zd]->localMesh->nbdry=%zd\n", i, j,
                         mapping[i][j]->localMesh->nbdry);
+	 }
+    }
 
     for (index i = 0; i < gnbdry; i++) {
         index k1 = getGridIndexOfBdryVertex(globalMesh, gMeshDim, gridDimX, i, 0, 0);

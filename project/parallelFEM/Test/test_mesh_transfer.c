@@ -4,7 +4,7 @@
 #include "hpc.h"
 
 #ifndef MPI_GRID_X
-#define MPI_GRID_X 2
+#define MPI_GRID_X 4
 #endif
 
 #ifndef MPI_GRID_Y
