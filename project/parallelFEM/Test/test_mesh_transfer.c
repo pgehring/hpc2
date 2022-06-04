@@ -97,7 +97,7 @@ bool testMeshMetadata(mesh *globalMesh, MeshMapping ***globalMapping,
             // get metadata from the mapping of current nonroot process by communication
             // and compute RMSE
             MPI_Status status;
-            if (rank == 0) {
+            if (r == 0) {
                 tstMetadata[0] = localMapping->localMesh->ncoord;
                 tstMetadata[1] = localMapping->localMesh->nelem;
                 tstMetadata[2] = localMapping->localMesh->nedges;
