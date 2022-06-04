@@ -48,16 +48,6 @@ void printCoordinates(mesh *mesh){
     }
 }
 
-void vec_print(size_t dim, double*x){
-    if (dim ==0 || !x){
-	return;
-    }
-
-    for (size_t i=0; i<dim; ++i){
-	printf("%zu : %3lf\n",i,x[i]);
-    }
-}
-
 
 void printMapping(MeshMapping *localMapping){
     for (index i=0; i<localMapping->localMesh->ncoord; ++i){
@@ -357,7 +347,7 @@ int main(int argc, char**argv){
     if (rank==0){
 	refSolP1 = solvePoissonRef(fname_p1, NUM_MESH_REFINES, F_vol, g_Neu);
 	printf("\nReference solution [0-5]: \n");
-	vec_print(dimSolution, refSolP1);		
+	vecPrint(refSolP1, dimSolution);		
     }
 
     double *cgSolP1, rmseP1;
@@ -365,7 +355,7 @@ int main(int argc, char**argv){
 
     if (rank==0){
 	printf("\nSolution using CG [0-5]:\n");
-	vec_print(dimSolution, cgSolP1);
+	vecPrint(cgSolP1, dimSolution);
 	rmseP1 = computeRMSE(dimSolution, refSolP1, cgSolP1);
 	printf("RMSE = %lf\n", rmseP1);
     }

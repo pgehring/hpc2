@@ -132,17 +132,6 @@ void vec_randomInit(double *x, index n){
 }
 
 /**
-  * @brief helper function to print a vector
-  * @param x double pointer to memory space of vector
-  * @param n dimension of vector
-*/
-void vec_print(double *x, index n){
-    for (index i=0; i<n; ++i){
-	printf("%lf\n",x[i]);
-    }
-}
-
-/**
   * @brief function to compute 2-Norm of the error of a test vector compared
 	   to a reference
   * @param n dimension of vectors
@@ -200,9 +189,9 @@ int main(){
     cs_spmv(csTest, x, yref, ALPHA, BETA);
     sed_spmv_sym(sedTest, x, ytst, ALPHA, BETA);
     printf("\nResult with reference implementation\n");
-    vec_print(yref,5);
+    vecPrint(yref,5);
     printf("\nResult with test implementation\n");
-    vec_print(ytst,5);
+    vecPrint(ytst,5);
 
     // Compute and display Error
     double errNorm = computeErrorNorm(5, yref, ytst);

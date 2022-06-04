@@ -151,6 +151,7 @@ void accumulateVector(MeshMapping *, double *, MPI_Comm);
 void accumulateVectorV(double *, MPI_Comm, int[8]);
 void accumulateVectorE(MeshMapping *, double *, MPI_Comm, int[8]);
 double dot_dist(double *x_ac, double *y_dist, size_t len, MPI_Comm grid);
+void vecPrint(double *x, index n);
 
 // Solver functions
 void sed_spmv_sym(const sed *A, const double *x, double *y, double alpha,

@@ -29,12 +29,6 @@ void vec_randomInit(double *x, index n){
 	x[i] = round(randomEntry()*100)/100;
     }
 }
-
-void vec_print(double *x, index n){
-    for (index i=0; i<n; ++i){
-	printf("%lf\n",x[i]);
-    }
-}
  
 double *shareAccumulatedVector(double *vec, size_t n, MPI_Comm grid){
     int rank; MPI_Comm_rank(grid, &rank);
@@ -132,9 +126,9 @@ int main(int argc, char**argv){
 	vec_randomInit(globalYVec, globalVecDim);
 
 	printf("\nReference y-vector:\n");
-	vec_print(globalYVec, globalVecDim);
+	vecPrint(globalYVec, globalVecDim);
 	printf("\nReference x-vector: \n");
-	vec_print(globalXVec, globalVecDim);
+	vecPrint(globalXVec, globalVecDim);
     }
 
     // Receive local vectors

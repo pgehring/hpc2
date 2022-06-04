@@ -42,3 +42,18 @@ double *newVectorWithInit(index n) {
     vectorInit(n, vec, 0);
     return vec;
 }
+
+/**
+ * @brief helper function to print a vector
+ * @param x double pointer to memory space of vector
+ * @param n dimension of vector
+ */
+void vecPrint(double *x, index n) {
+    if (n == 0 || !x) {
+        return;
+    }
+
+    for (size_t i = 0; i < n; ++i) {
+        printf("%zu : %3lf\n", i, x[i]);
+    }
+}
