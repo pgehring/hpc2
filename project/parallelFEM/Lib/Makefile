@@ -63,6 +63,7 @@ HPC = \
  hpc_mg_cycle.o  \
  hpc_solve_cg.o \
  hpc_solve_util.o \
+ hpc_jacobi.o \
  mesh_buildRhs.o \
  mesh_load.o  \
  hpc_prol.o  \
