@@ -81,7 +81,8 @@ HPC = \
  mesh_transfer.o \
  vec_accumulate.o \
  vec_util.o \
- vec_dot_dist.o
+ vec_dot_dist.o \
+ blas_level1.o
 
 
 $(HPC): ../Include/hpc.h Makefile

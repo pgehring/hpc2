@@ -1,5 +1,4 @@
 #include "hpc.h"
-#include <hpc.h>
 #include "blas_level1.h"
 #include <time.h>
 

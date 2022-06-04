@@ -1,4 +1,5 @@
 #include "hpc.h"
+#include "blas_level1.h"
 #include <mpi.h>
 #include <sys/time.h>
 
