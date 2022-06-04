@@ -1,6 +1,6 @@
 #include "hpc.h"
 #include <mpi.h>
-#include <time.h>
+#include <sys/time.h>
 
 #ifndef MPI_GRID_X
 #define MPI_GRID_X 4
