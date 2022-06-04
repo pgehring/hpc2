@@ -64,6 +64,19 @@ void printMapping(MeshMapping *localMapping){
     }
 }
 
+void printBoundary(mesh *localMesh){
+    for (index i=0; i<localMesh->nbdry; ++i){
+	printf("bdry %td: (%td,%td), type:%td\n",
+		localMesh->bdry[4*i+2], localMesh->bdry[4*i],
+		localMesh->bdry[4*i+1], localMesh->bdry[4*i+3]);
+    }
+}
+
+void index_print(index n, index *x){
+    for (index i=0; i<n; ++i){
+	printf("%td\n",x[i]);
+    }
+}
 
 /** Wrapper function for solving the demo problem with test implementation
     of CG solver */
@@ -97,7 +110,6 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
 	// Load basic mesh
 	mesh *m1 = mesh_load(fname);
 	mesh_getEdge2no(m1->nelem, m1->elem, &m1->nedges, &m1->edge2no);
-	m1->fixed = mesh_getFixed(m1->ncoord, m1->bdry, m1->nbdry, &m1->nfixed);
 	
 	// initial refinement
 	printf("Refining mesh\n");
@@ -117,16 +129,16 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
 	printf("Receiving mesh from root \n");
 	localMapping = mesh_transfer(mapping, grid);
     }
-    
+
+    // extract fixed nodes of local mesh
+    mesh_getFixedNodes(localMapping);
+
+
     // The local mesh
     mesh *localMesh = localMapping->localMesh;
 
     // Build the local stiffness matrices
     printf("Rank %d building local stiffness matrix\n",rank);
-    mesh_getEdge2no(localMesh->nelem, localMesh->elem, &localMesh->nedges,
-		    &localMesh->edge2no);
-    localMesh->fixed = mesh_getFixed(localMesh->ncoord, localMesh->bdry,
-				     localMesh->nbdry, &localMesh->nfixed);
     sed *sm_local = sed_sm_build(localMesh);
 
     // build local rhs
@@ -139,7 +151,6 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
 
     // Solve using CG Solver 
     // -------------------------------------------------
-  
     // allocate and zero initialize result vector
     localSolCG = newVectorWithInit(localMesh->ncoord);
     // insert dirichlet data for indices of fixed nodes
@@ -148,18 +159,6 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
     // Solve the problem using CG Solver
     solve_cg(localMapping, sm_local, rhs, localSolCG, grid, 10e-10,
 	     50);
-
-    MPI_Barrier(grid);
-
-    for (int i=0; i<nof_processes; ++i){
-	if (rank == i){
-	    printf("rank %d solution: \n",rank);
-	    vec_print(localMapping->localMesh->ncoord, localSolCG);
-	    printf("rank %d mapping :\n",rank);
-	    printMapping(localMapping);
-	}
-	MPI_Barrier(grid);
-    }
 
     // Accumulate the result (results only on root in actual global result)
     printf("Accumulate Result\n");

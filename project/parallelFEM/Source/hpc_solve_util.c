@@ -86,3 +86,56 @@ void insertDirichlet(double *u_local, mesh *localMesh, double (*u_D)(double *)){
     }
 
 }
+
+
+
+void mesh_getFixedNodes(MeshMapping *mapping){
+    index nbdry = mapping->localMesh->nbdry;
+    index *bdry = mapping->localMesh->bdry;
+
+    /** To make sure, that localMehs->fixed has the right data structure,
+	free the memory space if it has already been allocated */
+    if (mapping->localMesh->fixed && mapping->localMesh->nfixed >0){
+	free(mapping->localMesh->fixed);
+    }
+
+    // Allocate memory space with sufficient size
+    index *fixed = malloc(2*nbdry*sizeof(double));
+    index nfixed=0;
+
+    /** Create array with flgs, stating whether a vertex has already
+	been recognized as a fixed node*/
+    bool *setFlag = malloc(2*nbdry*sizeof(bool));
+    memset(setFlag, 0, 2*nbdry*sizeof(bool));
+
+    // Get fixed nodes
+    for (index i=0; i<nbdry; ++i){
+	if (!bdry[4*i+3]){
+	    // Insert indices of fixed nodes if not already set. Update flags
+	    if (!setFlag[bdry[4*i]]){
+		fixed[nfixed] = bdry[4*i];
+		setFlag[bdry[4*i]] = 1;
+		nfixed++;
+	    } 
+	    if (!setFlag[bdry[4*i+1]]){
+		fixed[nfixed] = bdry[4*i+1];
+		setFlag[bdry[4*i+1]] = 1;
+		nfixed++;
+	    }
+	}
+    }
+
+    // Write pointer and count to mesh
+    mapping->localMesh->nfixed = nfixed;
+    mapping->localMesh->fixed = fixed;
+}
+
+void blockFixedNodes(mesh *localMesh, double *x){
+    index nfixed = localMesh->nfixed;
+    index *fixed = localMesh->fixed;
+
+    for (index i=0; i<nfixed; ++i){
+	x[fixed[i]] = 0;
+    }
+
+}

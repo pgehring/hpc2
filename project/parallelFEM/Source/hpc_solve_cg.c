@@ -2,16 +2,7 @@
 #include <mpi.h>
 #include "blas_level1.h"
 
-void vector_print(double *x,index len){
-    if (!x || len==0){
-	printf("NULL\n");
-	return;
-    }
-    for (index i=0; i<len; ++i){
-	printf("%td : %lf\n",i,x[i]);
-    }
-}
-
+/**
 void blockFixedNodes(mesh *globalMesh, double *x){
     index bdryInd[2];
 
@@ -29,8 +20,7 @@ void blockFixedNodes(mesh *globalMesh, double *x){
 
     }
 }
-
-
+*/
 
 
 void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,

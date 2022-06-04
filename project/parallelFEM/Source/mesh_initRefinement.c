@@ -17,9 +17,6 @@ mesh *mesh_initRefinement(mesh *globalMesh, index nof_ref) {
     mesh_current = mesh_refine(globalMesh);
     mesh_getEdge2no(mesh_current->nelem, mesh_current->elem,
                     &mesh_current->nedges, &mesh_current->edge2no);
-    mesh_current->fixed =
-        mesh_getFixed(mesh_current->ncoord, mesh_current->bdry,
-                      mesh_current->nbdry, &mesh_current->nfixed);
 
     // Further refinements are performed iteratively
     for (index i = 1; i < nof_ref; ++i) {
@@ -28,9 +25,6 @@ mesh *mesh_initRefinement(mesh *globalMesh, index nof_ref) {
         mesh_current = mesh_refine(mesh_current);
         mesh_getEdge2no(mesh_current->nelem, mesh_current->elem,
                         &mesh_current->nedges, &mesh_current->edge2no);
-        mesh_current->fixed =
-            mesh_getFixed(mesh_current->ncoord, mesh_current->bdry,
-                          mesh_current->nbdry, &mesh_current->nfixed);
         // free the memory space of the previous mesh
         mesh_free(mesh_previous);
     }

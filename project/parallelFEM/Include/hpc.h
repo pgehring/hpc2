@@ -95,6 +95,7 @@ index mesh_print(const mesh *M, index brief);
 mesh *mesh_refine(mesh *In);
 index mesh_getEdge2no(const index nElem, const index *Elem, index *nEdges,
                       index **edge2no);
+void mesh_getFixedNodes(MeshMapping *mapping);
 
 // Mesh split and mapping functions
 MeshMapping ***mesh_split(mesh *, int[2]);
@@ -159,6 +160,7 @@ void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_lo
 double *accumulateResult(MeshMapping *localMapping, double *localResult,
 			 MPI_Comm grid);
 void insertDirichlet(double *u_local, mesh *localMesh, double (*u_D)(double *));
+void blockFixedNodes(mesh *globalMesh, double *x);
 
 #define HPC_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define HPC_MIN(a, b) (((a) < (b)) ? (a) : (b))
