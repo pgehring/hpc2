@@ -55,5 +55,5 @@ clean:
 	- $(RM) *.o
 
 purge: clean
-	- $(RM) -r test_mesh_split test_mesh_transfer test_vec_accumulate test_build_sm test_dot_dist test_sed_spmv\
+	- $(RM) -r $(HPC_TARGETS) \
     *.a *.dSYM *.obj *.dll
