@@ -23,18 +23,19 @@ double u_D(double x[2])
     return (x[0] * x[1]);
 }
 
-void saveBenchResults(struct timeval *tv, int n, index nofDoF, FILE *benchFile){
-    double durationVals[4];
+void saveBenchResults(struct timeval *tv, int n, index nofDoF, int nIter, FILE *benchFile){
+    double durationVals[n-1];
     for (int i=1; i<n; ++i){
 	durationVals[i-1] = 1.E+3*(tv[i].tv_sec - tv[0].tv_sec)+1.E-3*(tv[i].tv_usec -
 		       tv[0].tv_usec);
     }
     
-    fprintf(benchFile,"%10td	",nofDoF); 
+    fprintf(benchFile,"%10td ",nofDoF); 
+    fprintf(benchFile, "%10d ",nIter);
 
     for (int i=0; i<n-2; ++i){
 	printf("%lf\n",durationVals[i]);
-	fprintf(benchFile, "%10lf   ",durationVals[i]);
+	fprintf(benchFile, "%10lf ",durationVals[i]);
     }
 
     fprintf(benchFile, "%10lf\n", durationVals[n-2]);
@@ -42,7 +43,7 @@ void saveBenchResults(struct timeval *tv, int n, index nofDoF, FILE *benchFile){
 
 
 
-void solve_poisson_ref_mg(char *fname, int numRefines, double(*fV)(double *,index),
+int benchPoissonRefMG(char *fname, int numRefines, double(*fV)(double *,index),
 			      double(*fN)(double *, index), struct timeval *tv){
     
     index n, k, ncoord, nelem, nbdry, nfixed, nedges, total, *bdry,
@@ -72,10 +73,10 @@ void solve_poisson_ref_mg(char *fname, int numRefines, double(*fV)(double *,inde
     {
         A[k] = sed_nz_pattern(H[k]); /* get pattern of matrix */
         if (!A[k]){
-            return;
+            return -1;
 	} 
         if (!sed_buildS(H[k], A[k])){
-            return; /* assemble coefficient matrix */
+            return -1; /* assemble coefficient matrix */
 	}
 	if (k >= N){
             break;
@@ -88,8 +89,6 @@ void solve_poisson_ref_mg(char *fname, int numRefines, double(*fV)(double *,inde
         k++;
     }
   
-    // Save time after setting up mesh and stiffness matrices
-    TIME_SAVE(1,tv);
 
     n = A[N]->n;
     x = (double *)calloc(n, sizeof(double)); /* get workspace for sol*/
@@ -98,10 +97,6 @@ void solve_poisson_ref_mg(char *fname, int numRefines, double(*fV)(double *,inde
     mesh_buildRhs(H[N], b, F_vol,
                   g_Neu); /* build rhs (volume and Neumann data */
    
-		  
-    // Save time after setting up right hand side		  
-    TIME_SAVE(2,tv);
-
 
     /* incorporate Dirichlet data */
     ncoord = H[N]->ncoord;
@@ -129,9 +124,11 @@ void solve_poisson_ref_mg(char *fname, int numRefines, double(*fV)(double *,inde
         }
     }
 
-    TIME_SAVE(3,tv);
+    // Save timepoint after setting up problem data and before solving
+    TIME_SAVE(1,tv);
     cnt = hpc_mg(A, b, x, 1e-10, 50, H, N, 2, 2, 1);
-    TIME_SAVE(4,tv);
+    // Save time after solving
+    TIME_SAVE(2,tv);
 
     for (k = 0; k < HPC_MIN(10, A[N]->n); k++)
     {
@@ -146,6 +143,8 @@ void solve_poisson_ref_mg(char *fname, int numRefines, double(*fV)(double *,inde
     }
     free(H);
     free(A);
+
+    return cnt;
 
 }
 
@@ -163,21 +162,29 @@ index getNumDegreesOfFreedom(int nrefines){
 
 }
 
-int main(){
+int main(int argc, char *argv[]){
     char fname_p1[32] = "../Problem/problem1";
     struct timeval tv[5];
-    int numRefines = 1;
     FILE *bench_results = fopen("bench_results/bench_results_ref_mg.csv","w+");
-    int refineMax = 12;
+    int refineMax = 2;
     index nDOF;
+    int nIter;
 
-    fprintf(bench_results, "%10s    %10s    %10s    %10s    %10s\n",
-	    "DOFs","T_SM","T_Rhs","T_ud","T_mg");
+    if (argc > 1){
+	refineMax = atoi(argv[1]);
+    }
+
+    fprintf(bench_results, "%10s %10s %10s %10s\n",
+	    "DOFs","Iterations","T_Setup","T_Res");
     for (int nrefine=1; nrefine<=refineMax; ++nrefine){
 	printf("Refinement %d\n",nrefine);
-	solve_poisson_ref_mg(fname_p1, nrefine, F_vol, g_Neu, tv);
+
+	nIter = benchPoissonRefMG(fname_p1, nrefine, F_vol, g_Neu, tv);
+	
 	nDOF = getNumDegreesOfFreedom(nrefine);
 	printf("nDOF=%td\n",nDOF);
-	saveBenchResults(tv, 5, nDOF, bench_results);
+	printf("nIter=%d\n",nIter);
+
+	saveBenchResults(tv, 3, nDOF, nIter, bench_results);
     }
 }
