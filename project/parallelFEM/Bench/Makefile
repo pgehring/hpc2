@@ -12,6 +12,8 @@ endif
 
 DEBUG =
 
+RESULT_DIR=bench_results
+
 CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) $(DEBUG) -O3
 I = -I../Include
 
@@ -23,12 +25,18 @@ all: lib bench_ref_mg
 lib:
 	( cd ../Lib ; $(MAKE) )
 
-bench_ref_mg: lib bench_ref_mg.c Makefile
+bench_ref_mg: lib bench_ref_mg.c Makefile $(RESULT_DIR)
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
+
+$(RESULT_DIR):
+	mkdir $@
 
 clean:
 	- $(RM) *.o
 
 purge: clean
-	- $(RM) -r bench_ref_MG\
-    *.a *.dSYM *.obj *.dll
+	- $(RM) -r bench_ref_MG
+	- $(RM) *.a *.dSYM *.obj *.dll
+	- $(RM) *.o* *.e* *.p* core*
+	     
+

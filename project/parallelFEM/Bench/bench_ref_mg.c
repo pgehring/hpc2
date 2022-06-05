@@ -29,8 +29,7 @@ void saveBenchResults(struct timeval *tv, int n, index nofDoF, FILE *benchFile){
 	durationVals[i-1] = 1.E+3*(tv[i].tv_sec - tv[0].tv_sec)+1.E-3*(tv[i].tv_usec -
 		       tv[0].tv_usec);
     }
-
-
+    
     fprintf(benchFile,"%10td	",nofDoF); 
 
     for (int i=0; i<n-2; ++i){
@@ -168,16 +167,17 @@ int main(){
     char fname_p1[32] = "../Problem/problem1";
     struct timeval tv[5];
     int numRefines = 1;
-    FILE *bench_results = fopen("../bench_results/bench_results_ref_mg.csv","w+");
-    int refineMax = 10;
+    FILE *bench_results = fopen("bench_results/bench_results_ref_mg.csv","w+");
+    int refineMax = 12;
     index nDOF;
 
+    fprintf(bench_results, "%10s    %10s    %10s    %10s    %10s\n",
+	    "DOFs","T_SM","T_Rhs","T_ud","T_mg");
     for (int nrefine=1; nrefine<=refineMax; ++nrefine){
 	printf("Refinement %d\n",nrefine);
 	solve_poisson_ref_mg(fname_p1, nrefine, F_vol, g_Neu, tv);
 	nDOF = getNumDegreesOfFreedom(nrefine);
 	printf("nDOF=%td\n",nDOF);
 	saveBenchResults(tv, 5, nDOF, bench_results);
-	
     }
 }
