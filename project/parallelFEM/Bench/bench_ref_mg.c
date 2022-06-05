@@ -157,7 +157,7 @@ index getNumDegreesOfFreedom(int nrefines){
     }
     nNodes+=1;
     nDof=nNodes*nNodes;
-    nDof+=3*(nNodes-1)*(nNodes-1);
+    nDof+=2*(nNodes-1)*(nNodes)+(nNodes-1)*(nNodes-1);
 
     return nDof;
 
