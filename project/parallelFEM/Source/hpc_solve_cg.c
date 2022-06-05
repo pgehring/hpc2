@@ -3,11 +3,12 @@
 #include "blas_level1.h"
 
 
-void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,
+int solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,
 	      MPI_Comm grid, double tol, index maxIt){
    
     int rank; MPI_Comm_rank(grid, &rank);
     index localDim =localMapping->localMesh->ncoord;
+    int nofIt;
 
     // Declare and allocate necessary local distributed arrays
     double *r, *v;
@@ -86,10 +87,11 @@ void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_lo
 	blasl1_daxpy(s, w, localDim, 1, beta);
 
 	if (rank==1){
-	    printf("sigma=%lf\n",sigma);
+	    DEBUG_PRINT("sigma=%lf\n",sigma);
 	}
 
 	if (sqrt(sigma/sigma0)<=tol){
+	    nofIt = iter;
 	    break;
 	}
     }
@@ -99,7 +101,8 @@ void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_lo
     free(w);
     free(r);
     free(v);
-
+    
+    return nofIt;
 }
 
 

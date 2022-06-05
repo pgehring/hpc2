@@ -155,7 +155,7 @@ double dot_dist(double *x_ac, double *y_dist, size_t len, MPI_Comm grid);
 // Solver functions
 void sed_spmv_sym(const sed *A, const double *x, double *y, double alpha,
                   double beta);
-void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,
+int solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,
               MPI_Comm grid, double tol, index maxIt);
 double *accumulateResult(MeshMapping *localMapping, double *localResult,
 			 MPI_Comm grid);
