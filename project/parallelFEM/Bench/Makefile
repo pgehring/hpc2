@@ -25,7 +25,6 @@ lib:
 
 bench_ref_mg: lib bench_ref_mg.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
-	- ./$@
 
 clean:
 	- $(RM) *.o

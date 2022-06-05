@@ -168,7 +168,7 @@ int main(){
     char fname_p1[32] = "../Problem/problem1";
     struct timeval tv[5];
     int numRefines = 1;
-    FILE *bench_results = fopen("bench_results_ref_mg.csv","w+");
+    FILE *bench_results = fopen("../bench_results/bench_results_ref_mg.csv","w+");
     int refineMax = 10;
     index nDOF;
 
