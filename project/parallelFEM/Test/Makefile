@@ -18,7 +18,8 @@ I = -I../Include
 LDLIBS += -lm
 CS = $(LDFLAGS) ../Lib/libhpc.a $(LDLIBS)
 
-all: lib test_mesh_split test_vec_accumulate test_mesh_transfer test_dot_dist test_sed_spmv
+all: lib test_mesh_split test_vec_accumulate test_mesh_transfer\
+	 test_dot_dist test_sed_spmv test_solver_cg
 
 lib:
 	( cd ../Lib ; $(MAKE) )
