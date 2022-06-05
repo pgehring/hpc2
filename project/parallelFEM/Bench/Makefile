@@ -36,11 +36,11 @@ $(RESULT_DIR):
 
 clean:
 	- $(RM) *.o
-
-purge: clean
-	- $(RM) -r bench_ref_MG bench_cg_sep
 	- $(RM) *.a *.dSYM *.obj *.dll
 	- $(RM) *.o* *.e* *.p* core*
+
+purge: clean
+	- $(RM) -r bench_ref_mg bench_cg_sep
 	- $(RM) bench_results/*.csv
 	     
 
