@@ -10,7 +10,11 @@ ifdef OPT
   CFLAGS += -g -O3 -funroll-loops -DNDEBUG # -Wpedantic
 endif
 
-DEBUG =
+ifdef _DEBUG
+DEBUG = -D_DEBUG
+else
+DEBUG=
+endif
 
 RESULT_DIR=bench_results
 
@@ -20,7 +24,7 @@ I = -I../Include
 LDLIBS += -lm
 CS = $(LDFLAGS) ../Lib/libhpc.a $(LDLIBS)
 
-all: lib bench_ref_mg bench_cg_sep
+all: lib bench_ref_mg bench_cg_sep bench_cg_full
 
 lib:
 	( cd ../Lib ; $(MAKE) )
@@ -31,6 +35,9 @@ bench_ref_mg: lib bench_ref_mg.c Makefile $(RESULT_DIR)
 bench_cg_sep:   lib bench_cg_sep.c Makefile $(RESULT_DIR)
 	 - $(CC) $(CF) $(I) -o $@ $@.c $(CS)
 
+bench_cg_full:	lib bench_cg_full.c Makefile $(RESULT_DIR)
+	 - $(CC) $(CF) $(I) -o $@ $@.c $(CS)
+
 $(RESULT_DIR):
 	mkdir $@
 
@@ -38,6 +45,8 @@ clean:
 	- $(RM) *.o
 	- $(RM) *.a *.dSYM *.obj *.dll
 	- $(RM) *.o* *.e* *.p* core*
+	- (cd jobs_bench_cg_sep; $(RM) *.o* *.e* *.p* core*)
+	- (cd jobs_bench_cg_full; $(RM) *.o* *.e* *.p* core*)
 
 purge: clean
 	- $(RM) -r bench_ref_mg bench_cg_sep

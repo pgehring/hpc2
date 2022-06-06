@@ -83,22 +83,14 @@ int solvePoissonCG(char *fname,  double (*fV)(double *, index), double (*fN)(dou
 		DEBUG_PRINT("Refine mesh\n","");
 		meshRefined = mesh_initRefinement(m1, numRefines); 
 
-		// Save time after mesh refinement T_Mesh
-		TIME_SAVE(1, tv);
-
 		// create mapping
 		DEBUG_PRINT("Create mapping\n","");
 		mapping = mesh_split(meshRefined, dims);
 
-		// Save time after mapping creation T_Mapping
-		TIME_SAVE(2, tv);
-		
 		// transfer local meshes
 		DEBUG_PRINT("Transfer meshes\n","");
 		localMapping = mesh_transfer(mapping, grid);
 
-		// Save time T_Transfer after the full mesh transfer is finished
-		TIME_SAVE(3, tv);		
 
 		// Nonrot processes: Call method mesh_transfer to receive mesh and mapping
 		// data
@@ -125,9 +117,6 @@ int solvePoissonCG(char *fname,  double (*fV)(double *, index), double (*fN)(dou
 	// Synchronize processes to get timestamp where all have setup
 	// the problem data T_Setup and save it. The solver can now also be evaluated
 	// independently
-	MPI_Barrier(grid);
-	if (rank == 0) TIME_SAVE(4, tv);
-	MPI_Barrier(grid);	
 
 	// Solve using CG Solver 
 	// -------------------------------------------------
@@ -143,16 +132,13 @@ int solvePoissonCG(char *fname,  double (*fV)(double *, index), double (*fN)(dou
 
 	// Sychronize and save time T_Solve to get the timestamp where all processes
 	// finished solving
-	MPI_Barrier(grid);
-	if (rank==0) TIME_SAVE(5, tv);
-		
 
 	DEBUG_PRINT("Rank %d returned from solver, accumulating result\n",rank);
 	// Accumulate the result (results only on root in actual global result)
 	glblSolCG = accumulateResult(localMapping, localSolCG, grid);   
 
 	// Save timestamp T_Res where the global result is present on root
-	if (rank==0) TIME_SAVE(6, tv);
+	if (rank==0) TIME_SAVE(1, tv);
 	
 
 	//MPI_Barrier(grid);
@@ -236,7 +222,7 @@ int main(int argc, char**argv){
 	MPI_Comm_rank(grid, &rank);
 
 	// Initialize timeval array for benchinig
-	int numTimeVals = 7;
+	int numTimeVals = 2;
 	struct timeval tv[numTimeVals];
 	
 
@@ -252,8 +238,7 @@ int main(int argc, char**argv){
 		printf("result file: %s\n",fname_res);	
 
 		fileRes = fopen(fname_res,"a+");	
-		fprintf(fileRes,"%10s %10s %10s %10s %10s %10s %10s %10s\n", "nDOF","nIt",
-			"T_Mesh", "T_Mapping", "T_Transfer","T_Setup","T_Solve","T_Result"); 
+		fprintf(fileRes,"%10s %10s %10s \n", "nDOF","nIt", "T_Result"); 
 	}
 
 	MPI_Barrier(grid);
