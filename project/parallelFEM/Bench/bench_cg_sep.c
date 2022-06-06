@@ -25,14 +25,33 @@ double u_D(double x[2])
     return (x[0] * x[1]);
 }
 
-void saveBenchResults(struct timeval *tv, int n, index nofDoF, int nofIt, FILE *benchFile){
+void initResultFile(char * fname, FILE *fileResult){
+    fileResult = fopen(fname,"r");
+   
+    printf("Testing if file exists or is empty\n");
+    // write header if result file is empty
+    if (fileResult == NULL || fgetc(fileResult) == EOF){
+	fclose(fileResult);
+	fileResult = fopen(fname, "w+");
+        fprintf(fileResult, "%10s %10s %10s %10s %10s %10s %10s %10s %10s\n",
+		 "nof_proc", "DOFs","Iterations", "T_Mesh","T_Mapping","T_Transfer",
+		 "T_Setup","T_Solv","T_Res");
+	fclose(fileResult);
+    }else {
+	fclose(fileResult);
+    }
+}
+
+
+void saveBenchResults(struct timeval *tv, int n, index nofDoF, int nofIt, 
+		      int nof_processes, FILE *benchFile){
     double durationVals[n-1];
     for (int i=1; i<n; ++i){
 	durationVals[i-1] = 1.E+3*(tv[i].tv_sec - tv[0].tv_sec)+1.E-3*(tv[i].tv_usec -
 		       tv[0].tv_usec);
     }
     
-    fprintf(benchFile,"%10td %10td ",nofDoF, nofIt); 
+    fprintf(benchFile,"%10d %10td %10td ",nof_processes, nofDoF, nofIt); 
 
     for (int i=0; i<n-2; ++i){
 	printf("T%d: %lf\n",i+1, durationVals[i]);
@@ -46,20 +65,15 @@ void saveBenchResults(struct timeval *tv, int n, index nofDoF, int nofIt, FILE *
 
 /** Wrapper function for solving the demo problem with test implementation
     of CG solver */
-int benchPoissonCG(char *fname, int numRefines, int *gridDims, 
+int benchPoissonCG(char *fname, int numRefines, 
 		       double (*fV)(double *, index), double (*fN)(double *, index),
-		       struct timeval *tv){
+		       struct timeval *tv, MPI_Comm grid){
 
-    // Initialize MPI grid Communication
-    int nof_processes; MPI_Comm_size(MPI_COMM_WORLD, &nof_processes);
-    int rank; MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    int periods[2] = {false,false};
-
-    MPI_Dims_create(nof_processes, 2, gridDims);
-    MPI_Comm grid;
-    MPI_Cart_create(MPI_COMM_WORLD, 2, gridDims, periods, true, &grid);
+    // Get MPI Rank and dimensions of grid
+    int rank, nof_processes, gridDims[2], periods[2], coords[2];
     MPI_Comm_rank(grid, &rank);
-
+    MPI_Comm_size(grid, &nof_processes);
+    MPI_Cart_get(grid, 2, gridDims, periods, coords);
 
     // Declare pointers for mapping structs
     MeshMapping ***mapping;
@@ -177,12 +191,15 @@ index getNumDegreesOfFreedom(int nrefines){
 }
 
 int main(int argc, char *argv[]){
+    // Init MPI
+    MPI_Init(&argc, &argv);
+    
     char fname_p1[32] = "../Problem/problem1";
+    char fname_result[40] =  "bench_results/bench_results_cg_sep.csv";
+    FILE *fileResult; 
     struct timeval tv[7];
-    FILE *bench_results = fopen("bench_results/bench_results_cg_sep.csv","w+");
-    int refineMax;
     index nDOF;
-    int nofIterations;
+    int numRefines, nofIterations;
 
     // check input parameters
     if (argc < 4){
@@ -192,33 +209,42 @@ int main(int argc, char *argv[]){
 
     // get grid dimensions and max refines from commandline arguments
     int gridDims[2] = {atoi(argv[1]), atoi(argv[2])};
-    refineMax = atoi(argv[3]);
+    numRefines = atoi(argv[3]);
 
-    // Init MPI
-    MPI_Init(&argc, &argv);
+
+    // Initialize MPI grid Communication
+    int nof_processes; MPI_Comm_size(MPI_COMM_WORLD, &nof_processes);
     int rank; MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    int periods[2] = {false,false};
+
+    MPI_Dims_create(nof_processes, 2, gridDims);
+    MPI_Comm grid;
+    MPI_Cart_create(MPI_COMM_WORLD, 2, gridDims, periods, true, &grid);
+    MPI_Comm_rank(grid, &rank);
+
+    // initialize result file
+    if (rank == 0){
+	printf("Init result file\n");
+	initResultFile(fname_result, fileResult);
+	fileResult = fopen(fname_result, "a");
+    }
 
     if (rank==0){
 	printf("=== Start bench_cg ===\n");
 	printf("Argumens dimX=%d, dimY=%d, nRefines=%d\n", gridDims[0],gridDims[1],
-		refineMax);
-        fprintf(bench_results, "%10s %10s %10s %10s %10s %10s %10s %10s\n",
-		 "DOFs","Iterations", "T_Mesh","T_Mapping","T_Transfer","T_Setup","T_Solv","T_Res");
+		numRefines);
     }
 
+    // solve poisson problem
+    nofIterations = benchPoissonCG(fname_p1, numRefines,  F_vol, g_Neu, tv, grid);
 
-    for (int nrefine=1; nrefine<=refineMax; ++nrefine){
-	if (rank==0) printf("Refinement %d\n",nrefine);
-
-	nofIterations = benchPoissonCG(fname_p1, nrefine, gridDims, F_vol, g_Neu, tv);
-
-	if (rank==0){
-	    nDOF = getNumDegreesOfFreedom(nrefine);
-	    printf("nDOF=%td\n",nDOF);
-	    printf("nofIterations=%d\n",nofIterations);
-	    saveBenchResults(tv, 7, nDOF, nofIterations, bench_results);
-	}
+    if (rank==0){
+	nDOF = getNumDegreesOfFreedom(numRefines);
+	printf("nDOF=%td\n",nDOF);
+	printf("nofIterations=%d\n",nofIterations);
+	saveBenchResults(tv, 7, nDOF, nofIterations, nof_processes, fileResult); 
+	fclose(fileResult);
     }
-
     MPI_Finalize();
+
 }
