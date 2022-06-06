@@ -158,7 +158,7 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
     if (rank ==0){
 	delete2DMeshMapping(mapping, dims[0]);
 	mesh_free(meshRefined);
-	mesh_free(m1);
+	// mesh_free(m1);
 	free(localSolCG);
 
     // if rank!=0 free the local mesh
@@ -167,7 +167,7 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
 	    mesh_free(localMapping->localMesh);
 	    deleteMeshMapping(localMapping);
 	}
-	free(glblSolCG);
+	// free(glblSolCG);
     }
 
 
@@ -176,7 +176,111 @@ double *solvePoissonCG(char *fname, int numRefines, double (*fV)(double *, index
 }
 
 
+// Wrapper function for solving the demo problem with test implementation
+// of jacobi solver
+double *solvePoissonJcb(char *fname, int numRefines, double (*fV)(double *, index),
+		       double (*fN)(double *, index)){
 
+    // Initialize MPI grid Communication
+    int nof_processes; MPI_Comm_size(MPI_COMM_WORLD, &nof_processes);
+    int rank; MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    int dims[2] = {MPI_GRID_X,MPI_GRID_Y};
+    int periods[2] = {false,false};
+
+    MPI_Dims_create(nof_processes, 2, dims);
+    MPI_Comm grid;
+    MPI_Cart_create(MPI_COMM_WORLD, 2, dims, periods, true, &grid);
+    MPI_Comm_rank(grid, &rank);
+
+
+    // Declare pointers for mapping structs
+    MeshMapping ***mapping;
+    mesh *m1;
+    mesh *meshRefined;
+    MeshMapping *localMapping;
+
+    // Declare pointer to solution vectors and right hand side
+    double *localSol, *glblSol, *rhs;
+
+    // root: load and refine mesh, send local meshes
+    if (rank==0){
+	
+	// Load basic mesh
+	mesh *m1 = mesh_load(fname);
+	mesh_getEdge2no(m1->nelem, m1->elem, &m1->nedges, &m1->edge2no);
+	m1->fixed = mesh_getFixed(m1->ncoord, m1->bdry, m1->nbdry, &m1->nfixed);
+	
+	// initial refinement
+	printf("Refining mesh\n");
+	meshRefined = mesh_initRefinement(m1, numRefines); 
+	printf("Count of nodes in new mesh: %td\n",meshRefined->ncoord);
+
+	// create mapping
+	mapping = mesh_split(meshRefined, dims);
+
+	// transfer local meshes
+	printf("Transferring mesh from root\n");
+	localMapping = mesh_transfer(mapping, grid);
+
+    // Nonrot processes: Call method mesh_transfer to receive mesh and mapping
+    // data
+    } else{
+	printf("Receiving mesh from root \n");
+	localMapping = mesh_transfer(mapping, grid);
+    }
+    
+    // The local mesh
+    mesh *localMesh = localMapping->localMesh;
+
+    // Build the local stiffness matrices
+    printf("Rank %d building local stiffness matrix\n",rank);
+    mesh_getEdge2no(localMesh->nelem, localMesh->elem, &localMesh->nedges,
+		    &localMesh->edge2no);
+    localMesh->fixed = mesh_getFixed(localMesh->ncoord, localMesh->bdry,
+				     localMesh->nbdry, &localMesh->nfixed);
+    sed *sm_local = sed_sm_build(localMesh);
+
+    // build local rhs
+    rhs = newVectorWithInit(localMesh->ncoord);
+    mesh_build_rhs(localMesh, rhs, F_vol, g_Neu);
+
+    // Synchronize all processes ONLY FOR PRETTY COMMANDLINE OUTPUT
+    int msg=0; MPI_Bcast(&msg, 1, MPI_INT, 0, grid);
+
+
+    // Solve using jacobi solver
+    // -------------------------------------------------
+  
+    // allocate and zero initialize result vector
+    localSol = newVectorWithInit(localMesh->ncoord);
+    // insert dirichlet data for indices of fixed nodes
+    insertDirichlet(localSol, localMesh, u_D);
+  
+    // Solve the problem using jacobi Solver
+    hpc_jacobi(localMapping, sm_local, rhs, localSol, grid, 10e-10, 50);
+
+    // Accumulate the result (results only on root in actual global result)
+    printf("Accumulate Result\n");
+    glblSol = accumulateResult(localMapping, localSol, grid);   
+
+    // If rank=0 free the mapping, the refined mesh the base mesh and the
+    if (rank ==0){
+	delete2DMeshMapping(mapping, dims[0]);
+	mesh_free(meshRefined);
+	// mesh_free(m1);
+	free(localSol);
+
+    // if rank!=0 free the local mesh
+    } else{
+	if (localMapping != NULL){
+	    mesh_free(localMapping->localMesh);
+	    deleteMeshMapping(localMapping);
+	}
+	// free(glblSol);
+    }
+
+    return glblSol;
+}
 
 /** Wrapper for solving the demo problem with the reference implementation */
 double *solvePoissonRef(char *fname, int numRefines, double (*fV)(double *, index),
@@ -337,7 +441,7 @@ int main(int argc, char**argv){
 
     if (rank==0){
 	printf("\n=== Start test_solver_cg ===\n");
-	printf("\n--- Test 1: Poisson problem 1 ---\n");
+	printf("\n--- Test 1: Poisson problem 1 (CG solver) ---\n");
 	printf("-- expected solution dimension: %zu\n",dimSolution);
     }
 
@@ -350,19 +454,26 @@ int main(int argc, char**argv){
 	vecPrint(refSolP1, dimSolution);		
     }
 
-    double *cgSolP1, rmseP1;
+    double *cgSolP1, cgRMSEP1, *jcbSolP1, jcbRMSEP1;
     cgSolP1 =  solvePoissonCG(fname_p1, NUM_MESH_REFINES, F_vol, g_Neu);
+
+    jcbSolP1 = solvePoissonJcb(fname_p1, NUM_MESH_REFINES, F_vol, g_Neu);
 
     if (rank==0){
 	printf("\nSolution using CG [0-5]:\n");
 	vecPrint(cgSolP1, dimSolution);
-	rmseP1 = computeRMSE(dimSolution, refSolP1, cgSolP1);
-	printf("RMSE = %lf\n", rmseP1);
+	cgRMSEP1 = computeRMSE(dimSolution, refSolP1, cgSolP1);
+	printf("RMSE = %lf\n", cgRMSEP1);
+
+    printf("\nSolution using w-Jacobi [0-5]:\n");
+	vecPrint(jcbSolP1, dimSolution);
+	jcbRMSEP1 = computeRMSE(dimSolution, refSolP1, jcbSolP1);
+	printf("RMSE = %lf\n", jcbRMSEP1);
     }
 
 
-    free(refSolP1);
-    free(cgSolP1);
+    // free(refSolP1);
+    // free(cgSolP1);
 
 
     MPI_Finalize();

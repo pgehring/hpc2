@@ -24,39 +24,39 @@ void hpc_jacobi(MeshMapping *mapping, const sed *localSM, double *f,
 
     // accumulated and distributed vectors
     double *ww = newVectorWithInit(localSM->n);
-    double *uu = newVectorWithInit(localSM->n);
-
-    double *u0 = newVectorWithInit(localSM->n);
 
     // initialize vector for local inverse diagonal
     double *invDiag = newVectorWithInit(localSM->n);
     double *dd = newVectorWithInit(localSM->n);
 
     // initialze vector for right hand side and residual
-    double *ff = newVectorWithInit(localSM->n);
     double *r = newVectorWithInit(localSM->n);
 
     // multiplied accumulated dd and ww -> dw
     double *dw = newVectorWithInit(localSM->n);
 
+    // update right hand side to accomodate for dirichlet data
+    sed_spmv_sym(localSM, u, f, -1.0, 1.0);
+
     // initially copy and accumulate diagonal of stiffness matrix
     blasl1_dcopy(localSM->x, dd, localSM->n, 1.0);
     accumulateVector(mapping, dd, grid);
 
-    // invert diagonal of stiffness matrix and save for interation
-    for (size_t i = 0; i < localSM->n; ++i)
-        invDiag[i] = 1 / localSM->x[i];
-
-    // set initial local u to the rhrs divided by the diagonal
-    for (size_t i = 0; i < localSM->n; ++i)
-        u0[i] = f[i] * invDiag[i];
-
-    // sed_spmv_sym(localSM, u0, ff, -1.0, 1.0);
+    // invert diagonal of stiffness matrix, save for interation
+    // and apply to right hand side for initial value
+    for (size_t i = 0; i < localSM->n; ++i){
+        invDiag[i] = 1 / dd[i];
+        u[i] = f[i] * invDiag[i];
+    }
 
     // calculate residual and accumulate the vector
-    sed_spmv_sym(localSM, u0, ff, 1.0, 0);
-    blasl1_daxpy(ff, r, localSM->n, -1.0, 1.0);
+    sed_spmv_sym(localSM, u, r, 1.0, 0);
+    blasl1_daxpy(r, f, localSM->n, 1.0, -1.0);
+    blockFixedNodes(mapping->localMesh, r);
+
     blasl1_dcopy(r, ww, localSM->n, 1.0);
+
+    // accumulate residuum
     accumulateVector(mapping, ww, grid);
 
     sigma = dot_dist(ww, r, localSM->n, grid);
@@ -64,22 +64,27 @@ void hpc_jacobi(MeshMapping *mapping, const sed *localSM, double *f,
 
     k = 0;
     // solve iteratively
-    while (pow(tol, 2) * sigma_0 > sigma) {
+    while ((pow(tol, 2) * sigma_0 < sigma) && (k <= maxIt-1)) {
         k += 1;
-
+        
         // calculate local u
         for (size_t i = 0; i < localSM->n; ++i)
-            dw[i] = dd[i] * ww[i];
+            dw[i] = invDiag[i] * ww[i];
 
-        blasl1_daxpy(u0, uu, localSM->n, 1.0, 1.0);
+        blasl1_daxpy(u, dw, localSM->n, 1.0, 1.0);
 
         // calculate residual and accumulate the vector
-        sed_spmv_sym(localSM, uu, ff, 1.0, 0);
-        blasl1_daxpy(ff, r, localSM->n, -1.0, 1.0);
+        sed_spmv_sym(localSM, u, r, 1.0, 0);
+        blasl1_daxpy(r, f, localSM->n, 1.0, -1.0);
+        blockFixedNodes(mapping->localMesh, r);
+
         blasl1_dcopy(r, ww, localSM->n, 1.0);
+
+        // accumulate residuum
         accumulateVector(mapping, ww, grid);
 
         // calculate error
         sigma = dot_dist(ww, r, localSM->n, grid);
+
     }
 }
