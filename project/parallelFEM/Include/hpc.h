@@ -162,7 +162,7 @@ double *accumulateResult(MeshMapping *localMapping, double *localResult,
 			 MPI_Comm grid);
 void insertDirichlet(double *u_local, mesh *localMesh, double (*u_D)(double *));
 void blockFixedNodes(mesh *globalMesh, double *x);
-void hpc_jacobi(MeshMapping *mapping, const sed *localSM, double *f,
+int hpc_jacobi(MeshMapping *mapping, const sed *localSM, double *f,
                 double *u, MPI_Comm grid, double tol, index maxIt);
 
 #define HPC_MAX(a, b) (((a) > (b)) ? (a) : (b))

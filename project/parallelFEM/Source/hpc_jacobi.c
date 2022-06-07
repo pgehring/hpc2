@@ -4,16 +4,17 @@
 #include <blas_level1.h>
 
 /**
- * @brief Solve a system of linear equations distributed to multiple nodes.
- *
- * @param sm
- * @param x
- * @param y
+ * @brief 
+ * 
+ * @param mapping 
+ * @param localSM 
+ * @param f 
+ * @param u 
+ * @param grid 
+ * @param tol 
+ * @param maxIt 
  */
-/*
-void solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,
-	      double *u_glbl, MPI_Comm grid, double tol, index maxIt)*/
-void hpc_jacobi(MeshMapping *mapping, const sed *localSM, double *f,
+int hpc_jacobi(MeshMapping *mapping, const sed *localSM, double *f,
                 double *u, MPI_Comm grid, double tol, index maxIt) {
 
     double sigma, sigma_0;
@@ -87,4 +88,5 @@ void hpc_jacobi(MeshMapping *mapping, const sed *localSM, double *f,
         sigma = dot_dist(ww, r, localSM->n, grid);
 
     }
+    return k;
 }
