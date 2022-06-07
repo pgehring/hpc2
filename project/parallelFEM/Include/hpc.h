@@ -151,6 +151,7 @@ void accumulateVector(MeshMapping *, double *, MPI_Comm);
 void accumulateVectorV(double *, MPI_Comm, int[8]);
 void accumulateVectorE(MeshMapping *, double *, MPI_Comm, int[8]);
 double dot_dist(double *x_ac, double *y_dist, size_t len, MPI_Comm grid);
+void vecPrint(double *x, index n);
 
 // Solver functions
 void sed_spmv_sym(const sed *A, const double *x, double *y, double alpha,
@@ -161,6 +162,8 @@ double *accumulateResult(MeshMapping *localMapping, double *localResult,
 			 MPI_Comm grid);
 void insertDirichlet(double *u_local, mesh *localMesh, double (*u_D)(double *));
 void blockFixedNodes(mesh *globalMesh, double *x);
+void hpc_jacobi(MeshMapping *mapping, const sed *localSM, double *f,
+                double *u, MPI_Comm grid, double tol, index maxIt);
 
 #define HPC_MAX(a, b) (((a) > (b)) ? (a) : (b))
 #define HPC_MIN(a, b) (((a) < (b)) ? (a) : (b))

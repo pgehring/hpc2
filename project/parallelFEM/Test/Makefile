@@ -18,8 +18,16 @@ I = -I../Include
 LDLIBS += -lm
 CS = $(LDFLAGS) ../Lib/libhpc.a $(LDLIBS)
 
-all: lib test_mesh_split test_vec_accumulate test_mesh_transfer\
-	 test_dot_dist test_sed_spmv test_solver_cg
+HPC_TARGETS = \
+	test_mesh_split \
+	test_vec_accumulate \
+	test_mesh_transfer \
+	test_build_sm \
+	test_sed_spmv \
+	test_dot_dist \
+	test_solver_cg
+
+all: lib $(HPC_TARGETS)
 
 lib:
 	( cd ../Lib ; $(MAKE) )
@@ -55,5 +63,5 @@ clean:
 	- $(RM) *.o
 
 purge: clean
-	- $(RM) -r test_mesh_split test_mesh_transfer test_vec_accumulate test_build_sm test_dot_dist test_sed_spmv\
+	- $(RM) -r $(HPC_TARGETS) \
     *.a *.dSYM *.obj *.dll

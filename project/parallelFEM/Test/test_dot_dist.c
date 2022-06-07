@@ -1,5 +1,4 @@
 #include "hpc.h"
-#include <hpc.h>
 #include "blas_level1.h"
 #include <time.h>
 
@@ -28,12 +27,6 @@ double randomEntry() { return ((double)rand() - RAND_MAX / 2) / RAND_MAX *10; }
 void vec_randomInit(double *x, index n){
     for (index i=0; i<n; ++i){
 	x[i] = round(randomEntry()*100)/100;
-    }
-}
-
-void vec_print(double *x, index n){
-    for (index i=0; i<n; ++i){
-	printf("%lf\n",x[i]);
     }
 }
  
@@ -133,9 +126,9 @@ int main(int argc, char**argv){
 	vec_randomInit(globalYVec, globalVecDim);
 
 	printf("\nReference y-vector:\n");
-	vec_print(globalYVec, globalVecDim);
+	vecPrint(globalYVec, globalVecDim);
 	printf("\nReference x-vector: \n");
-	vec_print(globalXVec, globalVecDim);
+	vecPrint(globalXVec, globalVecDim);
     }
 
     // Receive local vectors
