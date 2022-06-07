@@ -57,6 +57,7 @@ int solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_loc
 
     /** Compute approximations iteratively */
     for (index iter=0; iter<maxIt; ++iter){
+	nofIt = iter;
 
 	// Compute spmv v=K*s and block fixed values in v
 	sed_spmv_sym(localSM, s, v, 1.0, 0);        
@@ -91,10 +92,13 @@ int solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_loc
 	}
 
 	if (sqrt(sigma/sigma0)<=tol){
-	    nofIt = iter;
 	    break;
 	}
     }
+
+    // Print output if naximum number of iterations has been reached
+    fprinf(stderr, "hpc_solve_cg: Maximum number of iterations %td reached!\n",
+	   maxIt);
 
     // Free local arrays
     free(s);
