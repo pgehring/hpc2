@@ -1,4 +1,5 @@
 
+
 CC = mpicc
 
 ifdef OPENMP
@@ -44,9 +45,9 @@ $(RESULT_DIR):
 clean:
 	- $(RM) *.o
 	- $(RM) *.a *.dSYM *.obj *.dll
-	- $(RM) *.o* *.e* *.p* core*
-	- (cd jobs_bench_cg_sep; $(RM) *.o* *.e* *.p* core*)
-	- (cd jobs_bench_cg_full; $(RM) *.o* *.e* *.p* core*)
+	- $(RM) *.o* *.e* *.p* core* .wrapper*
+	- (cd jobs_bench_cg_sep; $(RM) *.o* *.e* *.p* core*, .wrapper*)
+	- (cd jobs_bench_cg_full; $(RM) *.o* *.e* *.p* core*, .wrapper*)
 
 purge: clean
 	- $(RM) -r bench_ref_mg bench_cg_sep
