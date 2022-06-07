@@ -502,8 +502,8 @@ int main(int argc, char**argv){
 
     DEBUG_PRINT("rank %d finalizing\n",rank);
     
-    free(refSolP1);
-    free(cgSolP1);
+    // free(refSolP1);
+    // free(cgSolP1);
 
 
     MPI_Finalize();

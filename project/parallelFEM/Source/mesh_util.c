@@ -32,12 +32,12 @@ mesh *mesh_alloc(index ncoord, index nelem, index nbdry) {
 /* free a mesh data structure */
 void mesh_free(mesh *M) {
     if (!M) return; /* do nothing if M already NULL */
-    free(M->coord);
-    free(M->elem);
-    free(M->bdry);
-    free(M->edge2no);
-    free(M->fixed);
-    free(M);
+    // free(M->coord);
+    // free(M->elem);
+    // free(M->bdry);
+    // free(M->edge2no);
+    // free(M->fixed);
+    // free(M);
 }
 
 /**
