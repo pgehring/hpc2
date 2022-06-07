@@ -30,9 +30,9 @@ void transfer_Metadata(index *buffer, MeshMapping ***mapping, int rankRecv,
                              mapping[indXRecv][indYRecv]->lMeshDimX,
                              mapping[indXRecv][indYRecv]->lMeshDimY};
 
-        DEBUG_PRINT("Sending metadata: [%td,%td,%td,%td,%td,%td,%td]\n",
+        DEBUG_PRINT("Sending metadata: [%td,%td,%td,%td,%td,%td,%td] to rank %d)\n",
                     sendData[0], sendData[1], sendData[2], sendData[3],
-                    sendData[4], sendData[5], sendData[6]);
+                    sendData[4], sendData[5], sendData[6], rankRecv);
 
         MPI_Send(sendData, 7, MPI_LONG_LONG, rankRecv, 1, grid);
 
@@ -69,18 +69,19 @@ void transfer_MeshData(MeshMapping ***mapping, int rankRecv, mesh *localMesh,
         index nBdry = mapping[indXRecv][indYRecv]->localMesh->nbdry;
 
         // Transfer coordinates
-        DEBUG_PRINT("Sending meshdata to rank %d\n", rankRecv);
+        DEBUG_PRINT("Sending %td coords, %td elems and %td bdrys to rank %d\n", 
+		    nCoord, nElem, nBdry, rankRecv);
         // Send coordinates
         MPI_Send(mapping[indXRecv][indYRecv]->localMesh->coord, 2 * nCoord,
                  MPI_DOUBLE, rankRecv, 20, grid);
 
         // Send elements
         MPI_Send(mapping[indXRecv][indYRecv]->localMesh->elem, 7 * nElem,
-                 MPI_LONG_LONG, rankRecv, 21, grid);
+                 MPI_AINT, rankRecv, 21, grid);
 
         // Send boundary
         MPI_Send(mapping[indXRecv][indYRecv]->localMesh->bdry, 4 * nBdry,
-                 MPI_LONG_LONG, rankRecv, 22, grid);
+                 MPI_AINT, rankRecv, 22, grid);
 
         DEBUG_PRINT("Mesh data sent to rank %d\n", rankRecv);
 
@@ -88,18 +89,19 @@ void transfer_MeshData(MeshMapping ***mapping, int rankRecv, mesh *localMesh,
         // Receive coordinates
         MPI_Status status;
         index recvCount;
-        DEBUG_PRINT("Rank %d, retrieving mesh data\n", rank);
+        DEBUG_PRINT("Rank %d, retrieving %td coords, %td elems and %td bndrys \n", rank,
+		     localMesh->ncoord, localMesh->nelem, localMesh->nbdry);
 
         // Receive coordinates
         MPI_Recv(localMesh->coord, 2 * localMesh->ncoord, MPI_DOUBLE, 0, 20,
                  grid, &status);
 
         // Receive elements
-        MPI_Recv(localMesh->elem, 7 * localMesh->nelem, MPI_LONG_LONG, 0, 21,
+        MPI_Recv(localMesh->elem, 7 * localMesh->nelem, MPI_AINT, 0, 21,
                  grid, &status);
 
         // Receive boundary
-        MPI_Recv(localMesh->bdry, 4 * localMesh->nbdry, MPI_LONG_LONG, 0, 22,
+        MPI_Recv(localMesh->bdry, 4 * localMesh->nbdry, MPI_AINT, 0, 22,
                  grid, &status);
 
         DEBUG_PRINT("Rank %d, received mesh data!\n", rank);
@@ -192,7 +194,7 @@ MeshMapping *mesh_transfer(MeshMapping ***globalMapping, MPI_Comm grid) {
     MPI_Comm_size(grid, &nof_processes);
 
     MeshMapping *localMapping;
-    index metadata[7];
+    index *metadata;
     int proc_coords[2];
     mesh *localMesh;
 
@@ -227,15 +229,18 @@ MeshMapping *mesh_transfer(MeshMapping ***globalMapping, MPI_Comm grid) {
         // Call the function with rank!=0 to get the metadata. Params 4 and 5
         // are not needed if rank!=0
         // metadata=[ncoord,nelem,nedges,nbdry, globalNCoords]
-        transfer_Metadata(metadata, globalMapping, rank, -1, -1, grid);
+        metadata = malloc(8*sizeof(index));
+	memset(metadata, 0, 7*sizeof(index));
+
+	transfer_Metadata(metadata, globalMapping, rank, -1, -1, grid);
+
+        DEBUG_PRINT("rank %d received Data: [%td,%td,%td,%td,%td,%td,%td]\n", rank,
+                    metadata[0], metadata[1], metadata[2], metadata[3],
+                    metadata[4],  metadata[5], metadata[6]);
 
         // Allocate memory for local mesh and insert data
         localMesh = mesh_alloc(metadata[0], metadata[1], metadata[3]);
         localMesh->nedges = metadata[2];
-
-        DEBUG_PRINT("rank %d received Data: [%td,%td,%td,%td,%td,%td,%td]\n", rank,
-                    localMesh->ncoord, localMesh->nelem, localMesh->nedges,
-                    localMesh->nbdry,  metadata[5], metadata[6]);
 
         // Receive the mesh data
         // params 4 and 5 are again not needed
@@ -245,6 +250,15 @@ MeshMapping *mesh_transfer(MeshMapping ***globalMapping, MPI_Comm grid) {
         localMapping = newMeshMapping(localMesh, metadata[4], metadata[5], metadata[6]);
 
         transfer_MappingData(NULL, localMapping, -1, -1, rank, grid);
+
+	DEBUG_PRINT("Rank %d Last coords in local mesh (%lf,%lf)\n", rank,
+		    localMapping->localMesh->coord[2*(localMapping->localMesh->ncoord-1)],
+		    localMapping->localMesh->coord[2*(localMapping->localMesh->ncoord-1)+1]);
+
+	DEBUG_PRINT("Rank %d last vertex of last elem index in local mesh %td\n", rank,
+		    localMapping->localMesh->elem[7*(localMapping->localMesh->nelem-1)+2]);
+
+	free(metadata);
     }
 
     return localMapping;

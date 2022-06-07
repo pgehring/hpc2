@@ -1,14 +1,15 @@
 
 
 CC = mpicc
-
+CFLAGS = -g
+LDFLAGS = -g
 ifdef OPENMP
-  CFLAGS += -g -wall -fopenmp 
-  LDFLAGS += -g -fopenmp
+  CFLAGS += -wall -fopenmp 
+  LDFLAGS += -fopenmp
 endif
 
 ifdef OPT
-  CFLAGS += -g -O3 -funroll-loops -DNDEBUG # -Wpedantic
+  CFLAGS += -O3 -funroll-loops -DNDEBUG # -Wpedantic
 endif
 
 ifdef _DEBUG
@@ -28,7 +29,7 @@ CS = $(LDFLAGS) ../Lib/libhpc.a $(LDLIBS)
 all: lib bench_ref_mg bench_cg_sep bench_cg_full
 
 lib:
-	( cd ../Lib ; $(MAKE) )
+	( cd ../Lib ; $(MAKE) _DEBUG=1 )
 
 bench_ref_mg: lib bench_ref_mg.c Makefile $(RESULT_DIR)
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
