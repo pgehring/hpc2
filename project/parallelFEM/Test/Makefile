@@ -10,7 +10,11 @@ ifdef OPT
   CFLAGS += -g -O3 -funroll-loops -DNDEBUG # -Wpedantic
 endif
 
-DEBUG =
+ifdef _DEBUG
+DEBUG = -D_DEBUG
+else
+DEBUG=
+endif
 
 CF = $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) $(DEBUG) -O3
 I = -I../Include
@@ -25,7 +29,7 @@ HPC_TARGETS = \
 	test_build_sm \
 	test_sed_spmv \
 	test_dot_dist \
-	test_solver_cg
+	test_solver
 
 all: lib $(HPC_TARGETS)
 
@@ -55,7 +59,7 @@ test_dot_dist: lib test_dot_dist.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
 	- mpirun -np 4 ./$@
 
-test_solver_cg: lib test_solver_cg.c Makefile
+test_solver: lib test_solver.c Makefile
 	- $(CC) $(CF) $(I) -o $@ $@.c $(CS)
 	- mpirun -np 8 ./$@
 

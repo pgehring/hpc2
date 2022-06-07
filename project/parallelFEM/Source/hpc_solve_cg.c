@@ -97,8 +97,10 @@ int solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_loc
     }
 
     // Print output if naximum number of iterations has been reached
-    fprintf(stderr, "hpc_solve_cg: Maximum number of iterations %td reached!\n",
-	   maxIt);
+    if (nofIt == maxIt){
+	fprintf(stderr, "hpc_solve_cg: Maximum number of iterations %td reached!\n",
+		 maxIt);
+    }
 
     // Free local arrays
     free(s);
