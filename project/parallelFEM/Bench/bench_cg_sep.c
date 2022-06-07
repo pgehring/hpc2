@@ -67,7 +67,7 @@ int solvePoissonCG(char *fname,  double (*fV)(double *, index), double (*fN)(dou
 	double *localSolCG, *glblSolCG, *rhs;
 
 	// Number of needed iterations
-	int maxit = 200;
+	int maxit = 1.E+6;
 	int nofIt;
 
 	// Save initial Time
