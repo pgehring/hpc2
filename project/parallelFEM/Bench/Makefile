@@ -26,7 +26,7 @@ I = -I../Include
 LDLIBS += -lm
 CS = $(LDFLAGS) ../Lib/libhpc.a $(LDLIBS)
 
-all: lib bench_ref_mg bench_cg_sep bench_cg_full
+all: lib bench_ref_mg bench_cg_sep bench_cg_full bench_jcb
 
 lib:
 	( cd ../Lib ; $(MAKE) _DEBUG=1 )
@@ -38,6 +38,9 @@ bench_cg_sep:   lib bench_cg_sep.c Makefile $(RESULT_DIR)
 	 - $(CC) $(CF) $(I) -o $@ $@.c $(CS)
 
 bench_cg_full:	lib bench_cg_full.c Makefile $(RESULT_DIR)
+	 - $(CC) $(CF) $(I) -o $@ $@.c $(CS)
+
+bench_jcb: lib bench_jcb.c Makefile $(RESULT_DIR)
 	 - $(CC) $(CF) $(I) -o $@ $@.c $(CS)
 
 $(RESULT_DIR):
