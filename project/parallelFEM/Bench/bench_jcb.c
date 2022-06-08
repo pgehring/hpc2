@@ -56,7 +56,7 @@ void outputResults(struct timeval *tv, int nTimeStamps, index DOF, int nofIt, FI
 
 /** Wrapper function for solving the demo problem with test implementation
   of CG solver */
-int solvePoissonCG(char *fname,  double (*fV)(double *, index), double (*fN)(double *, index),
+int solvePoisson(char *fname,  double (*fV)(double *, index), double (*fN)(double *, index),
 		   int numRefines,  struct timeval *tv, int *dims, MPI_Comm grid){
 
 	int rank; MPI_Comm_rank(grid, &rank);
@@ -141,16 +141,16 @@ int solvePoissonCG(char *fname,  double (*fV)(double *, index), double (*fN)(dou
 		MPI_Barrier(grid);	
 	}
 
-	// Solve using CG Solver 
+	// Solve using jacobi solver
 	// -------------------------------------------------
 	// allocate and zero initialize result vector
 	localSolCG = newVectorWithInit(localMesh->ncoord);
 	// insert dirichlet data for indices of fixed nodes
 	insertDirichlet(localSolCG, localMesh, u_D);
 
-	DEBUG_PRINT("Rank %d calling CG solver\n",rank);
+	DEBUG_PRINT("Rank %d calling jacobi solver\n",rank);
 	// Solve the problem using CG Solver
-	nofIt = solve_cg(localMapping, sm_local, rhs, localSolCG, grid, 10e-10,
+	nofIt = hpc_jacobi(localMapping, sm_local, rhs, localSolCG, grid, 10e-10,
 			maxit);
 
 	// Sychronize and save time T_Solve to get the timestamp where all processes
@@ -313,7 +313,7 @@ int main(int argc, char**argv){
 		DEBUG_PRINT("rank %d calling bench function\n",rank);
 		
 		// Call the function solving the poisson problem
-		nofIterations = solvePoissonCG(fname_p1,  F_vol, g_Neu, nrefine, tv, dims,grid);
+		nofIterations = solvePoisson(fname_p1,  F_vol, g_Neu, nrefine, tv, dims,grid);
 		
 		DEBUG_PRINT("Rank %d finished solve function, nIter = %d\n",rank,nofIterations);
 		
