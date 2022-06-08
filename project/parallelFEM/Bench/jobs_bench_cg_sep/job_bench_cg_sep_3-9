@@ -8,7 +8,7 @@
 #$ -S /bin/bash
 
 export MYAPP=./bench_cg_sep
-export MYAPP_FLAGS='3 1 1 9 results_bench_cg_sep_3-9.csv' 
+export MYAPP_FLAGS='3 1 2 9 results_bench_cg_sep_3-9.csv' 
 
 # ---------------------------
 # set the name of the job
@@ -63,4 +63,5 @@ echo "Got $NSLOTS slots."
 # run the job
 # ---------------------------
 echo "Will run command: mpirun_rsh -np $NSLOTS -machinefile $TMPDIR/machines  $MYAPP $MYAPP_FLAGS" 
+cd ..
 cm-launcher mpirun_rsh -np $NSLOTS -hostfile $TMPDIR/machines  $MYAPP $MYAPP_FLAGS

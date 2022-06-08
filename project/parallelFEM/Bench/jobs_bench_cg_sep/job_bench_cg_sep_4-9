@@ -8,14 +8,14 @@
 #$ -S /bin/bash
 
 export MYAPP=./bench_cg_sep
-export MYAPP_FLAGS='2 1 1 10 results_bench_cg_sep_2-10.csv' 
+export MYAPP_FLAGS='2 2 2 9 results_bench_cg_sep_4-9.csv' 
 
 # ---------------------------
 # set the name of the job
-#$ -N bench_cg_sep_2-10 
+#$ -N bench_cg_sep_4-9 
 
 # request between 2 and 8 slots
-#$ -pe mvapich 2 
+#$ -pe mvapich 4 
 #$ -l h_rt=02:00:00
 
 #################################################################

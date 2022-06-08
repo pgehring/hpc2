@@ -3,14 +3,15 @@
 #include <time.h>
 #include <sys/time.h>
 
-/** Functions of neumann- and dirichlet boundary as well as the volume forces
-  of Demo problem 1*/
-
+/** Macro for determination of datetime */
 struct timeval tv[50];
 #define TIME_SAVE(j,tv) (gettimeofday(&tv[j], (struct timezone *)0))
 #define TIME_ELAPSED(j, k, tv) \
 	(1.E+3 * (tv[k].tv_sec - tv[j].tv_sec) + 1.E-3* (tv[k].tv_usec - tv[j].tv_usec))
 
+
+
+/** Constants and functions defining the poisson problem from hpc_demo1.c */
 double kappa(double x[2], index typ)
 {
 	return (1.0);
@@ -29,7 +30,14 @@ double F_vol(double x[2], index typ) { return (0.0); }
 double g_Neu(double x[2], index typ) { return (x[0] * x[1]); }
 
 
-
+/**
+  @brief helper function to print the benchmark results for the current refinement
+	 state to the result file
+  @param tv pointer to timeval struct for saving the runtime values
+  @param nTimeStamps total number of timestamps
+  @param DOF number of degrees of freedom for the current refinement state
+  @param fileRes pointer to resultFile
+*/
 void outputResults(struct timeval *tv, int nTimeStamps, index DOF, int nofIt, FILE *fileRes){
 	double timesRel[nTimeStamps-1];	
 	
@@ -49,9 +57,10 @@ void outputResults(struct timeval *tv, int nTimeStamps, index DOF, int nofIt, FI
 
 }
 
-
-/** Wrapper function for solving the demo problem with test implementation
-  of CG solver */
+/**
+  @ brief wrapper for the full solution workflow using the CG solver.
+          The MPI grid gets created in main and passed as argument
+*/
 int solvePoissonCG(char *fname,  double (*fV)(double *, index), double (*fN)(double *, index),
 		   int numRefines,  struct timeval *tv, int *dims, MPI_Comm grid){
 
@@ -176,6 +185,11 @@ int solvePoissonCG(char *fname,  double (*fV)(double *, index), double (*fN)(dou
 	return nofIt;
 }
 
+
+/** 
+  * @brief little helper function to calculate the degrees of freedom for the
+	   current number of mesh refinements
+*/
 index getDegreesOfFreedom(int numRefines){
 	index nodeCount = 2;
 	index DOF=0;

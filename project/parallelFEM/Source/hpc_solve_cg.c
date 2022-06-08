@@ -3,6 +3,21 @@
 #include "blas_level1.h"
 
 
+
+/**
+  * @brief Parallel CG-Solver for the poisson problem. Writes solution to u_local.
+	   Needs to be called by all processes
+  * @param localMapping pointer to the local mapping struct of the process
+  * @param localSM pointer to local stiffness matrix as constructed by sed_sm_build
+  * @param pointer to vector of local right hand side.
+  * @param u_local pointer to double array for the local solution. Needs to be 
+	   initialized with dirichlet boundary values at dirichlet indizes and 
+	   0 elsewhere.
+  * @param grid The MPI grid
+  * @param tol Tolerance for the norm of the residuum
+  * @param maxIt maximum number of iterations to be performed
+  * @reutrn number of iterations performed by solver
+*/
 int solve_cg(MeshMapping *localMapping, sed *localSM, double *rhs, double *u_local,
 	      MPI_Comm grid, double tol, index maxIt){
    

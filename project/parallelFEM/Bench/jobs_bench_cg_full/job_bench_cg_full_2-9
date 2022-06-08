@@ -7,12 +7,12 @@
 # and the parameters it needs
 #$ -S /bin/bash
 
-export MYAPP=./bench_cg_sep
-export MYAPP_FLAGS='2 1 1 10 results_bench_cg_sep_2-10.csv' 
+export MYAPP=./bench_cg_full
+export MYAPP_FLAGS='2 1 1 9 results_bench_cg_full_2-9.csv' 
 
 # ---------------------------
 # set the name of the job
-#$ -N bench_cg_sep_2-10 
+#$ -N bench_cg_full_2-9 
 
 # request between 2 and 8 slots
 #$ -pe mvapich 2 

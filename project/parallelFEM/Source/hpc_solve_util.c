@@ -1,7 +1,14 @@
 #include <mpi.h>
 #include "hpc.h"
 
-
+/**
+  * @brief Function to put the global result together. Collects elements from
+           local part of accumulated vectors
+  * @param localMapping pointer to local mapping struct
+  * @param localResult pointer to double arrray of local result of a process
+  * @param grid the MPI grid
+  * @return the accumulated global solution
+*/
 double *accumulateResult(MeshMapping *localMapping, double *localResult,
 			 MPI_Comm grid){
     double *glblResult;
@@ -62,7 +69,15 @@ double *accumulateResult(MeshMapping *localMapping, double *localResult,
 }
 
 
-/** function to insert dirichlet boundary data in solution vector */
+/**
+  * @brief function to insert the dirichlet data into a local solution vector.
+	   used to initialize the vector for the solver. Vector should be 
+	   zero initialized
+  * @param u_local vector of local solution/approximation 
+  * @param localMesh the local mesh of the calling process
+  * @param u_D function pointer to functio that delivers value for the dirichtlet
+	   boundary condition
+*/
 void insertDirichlet(double *u_local, mesh *localMesh, double (*u_D)(double *)){
     index nbdry = localMesh->nbdry;
     index nodeInds[2];
@@ -88,7 +103,13 @@ void insertDirichlet(double *u_local, mesh *localMesh, double (*u_D)(double *)){
 }
 
 
-
+/**
+  * @brief function to insert the indizes of dirichlet nodes, i.e. the nodes with
+	   solution values fixed by dirichlet boundary conditions into the mesh
+	   data structure. It's kinda a replacement of the function mesh_getFixed
+	   that is applied to the solvers.
+  * @mapping pointer to the local mapping of the process
+*/
 void mesh_getFixedNodes(MeshMapping *mapping){
     index nbdry = mapping->localMesh->nbdry;
     index *bdry = mapping->localMesh->bdry;
@@ -125,6 +146,13 @@ void mesh_getFixedNodes(MeshMapping *mapping){
     free(setFlag);
 }
 
+/**
+  * @brief function to set the values of a vector at the indizes, specified in
+	   in localMesh->fixed to zero. Is needed for the solvers
+  * @param localMesh pointer to the local mesh
+  * @param x pointer to double array. Values at the respective indizes get 
+	   overwritten
+*/
 void blockFixedNodes(mesh *localMesh, double *x){
     index nfixed = localMesh->nfixed;
     index *fixed = localMesh->fixed;

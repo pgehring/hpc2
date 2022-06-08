@@ -7,7 +7,7 @@
 # and the parameters it needs
 #$ -S /bin/bash
 
-export MYAPP=./bench_cg_sep
+export MYAPP=../bench_cg_sep
 export MYAPP_FLAGS='2 1 1 10 results_bench_cg_sep_2-10.csv' 
 
 # ---------------------------
